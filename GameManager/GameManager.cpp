@@ -1,36 +1,34 @@
-#include <iostream>
-#include <fstream>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #include "Header/GameManager.h"
 
-GameManager::GameManager()
+GameManager::GameManager(Map *map)
 {
-    this->loadConfig();
-    this->createPipe();
+    this->map = map;
+    this->LoadConfig();
+    this->CreatePipe();
 }
 
-int GameManager::writeToPipe()
+GameManager::~GameManager()
+{
+    delete this->map;
+}
+
+int GameManager::WriteToPipe()
 {
     std::ofstream pipe(this->mapPipe);
 
-     if(pipe.is_open())
-     {
-         // TODO Send Map to Map
-         pipe << "This is a line." << std::endl << std::flush;
-         pipe << "This is another line." << std::endl << std::flush;
-         pipe.close();
-     }
-     else
-     {
-         std::cerr << "ERROR: Unable to open file";
-         std::exit(EXIT_FAILURE);
-     }
+    if(pipe.is_open())
+    {
+        pipe << this->map->Draw();
+        pipe.close();
+    }
+    else
+    {
+        std::cerr << "ERROR: Unable to open file";
+        std::exit(EXIT_FAILURE);
+    }
 }
 
-void GameManager::createPipe()
+void GameManager::CreatePipe()
 {
     if(mkfifo(this->mapPipe.c_str(), this->PIPE_MODE) == -1)
     {
@@ -39,7 +37,7 @@ void GameManager::createPipe()
     }
 }
 
-void GameManager::deletePipe()
+void GameManager::DeletePipe()
 {
     if(std::remove(this->mapPipe.c_str()) != EXIT_SUCCESS)
     {
@@ -48,17 +46,17 @@ void GameManager::deletePipe()
     }
 }
 
-void GameManager::start()
+void GameManager::Start()
 {
 
 }
 
-void GameManager::exit()
+void GameManager::Exit()
 {
 
 }
 
-void GameManager::loadConfig()
+void GameManager::LoadConfig()
 {
     std::string line;
     std::ifstream configFile("../RobotCommander.config");

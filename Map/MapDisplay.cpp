@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 
+#include "TileTypes.h"
+#include "Colors.h"
+
 int main()
 {
     while(true)
@@ -8,19 +11,54 @@ int main()
         std::string line;
         std::ifstream pipe("../../GameManager/cmake-build-debug/mapPipe");
 
-        if(pipe.is_open())
+        if(!pipe.is_open())
         {
-            while(getline(pipe, line))
-            {
-                std::cout << line << std::endl << std::flush;
-            }
-            pipe.close();
-        }
-        else
-        {
-            std::cerr << "ERROR: Unable to read from config file";
+            std::cerr << "ERROR: Unable to read from pipe";
             std::exit(EXIT_FAILURE);
         }
+
+        while(getline(pipe, line))
+        {
+            for(char &c : line)
+            {
+                switch(c)
+                {
+                    case (char) TileTypes::PLAYER:
+                        std::cout << ESCAPE << BG_BLACK << SEPARATOR << FG_LIGHT_GREY << END_ESCAPE << c << RESET;
+                        break;
+
+                    case (char) TileTypes::ENEMY:
+                        std::cout << ESCAPE << BG_RED << SEPARATOR << FG_BLACK << END_ESCAPE << c << RESET;
+                        break;
+
+                    case (char) TileTypes::MOUNTAIN:
+                        std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << c << RESET;
+                        break;
+
+                    case (char) TileTypes::WATER:
+                        std::cout << ESCAPE << BG_BLUE << SEPARATOR << FG_BLACK << END_ESCAPE << c << RESET;
+                        break;
+
+                    case (char) TileTypes::GRASS:
+                        std::cout << ESCAPE << BG_LIGHT_GREEN << SEPARATOR << FG_BLACK << END_ESCAPE << c << RESET;
+                        break;
+
+                    case (char) TileTypes::BUILDING:
+                        std::cout << ESCAPE << BG_GREY << SEPARATOR << FG_BLACK << END_ESCAPE << c << RESET;
+                        break;
+
+                    case (char) TileTypes::FOREST:
+                        std::cout << ESCAPE << BG_GREEN << SEPARATOR << FG_BLACK << END_ESCAPE << c << RESET;
+                        break;
+
+                    default:
+                        std::cerr << "ERROR: Unrecognised character" << std::endl;
+                        exit(EXIT_FAILURE);
+                }
+            }
+            std::cout << std::endl << std::flush;
+        }
+        pipe.close();
     }
 
     return EXIT_SUCCESS;

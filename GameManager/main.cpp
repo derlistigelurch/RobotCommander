@@ -4,8 +4,7 @@
 
 int main()
 {
-    auto *gameManager = new GameManager();
-    std::cout << gameManager->mapPipe << std::endl;
+    auto *gameManager = new GameManager(new Map(15, 15));
 
     int input = 0;
     while(true)
@@ -13,10 +12,12 @@ int main()
         std::cin >> input;
         if((int) input == 0)
         {
-            return EXIT_SUCCESS;
+            gameManager->DeletePipe();
+            break;
         }
-        gameManager->writeToPipe();
+        gameManager->WriteToPipe();
     }
 
-    return 0;
+    delete gameManager;
+    return EXIT_SUCCESS;
 }
