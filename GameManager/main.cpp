@@ -1,23 +1,21 @@
 #include <iostream>
 #include <getopt.h>
 
-#include "Header/GameManager.h"
+#include "include/GameManager.h"
 
 const struct option longOptions[] =
         {
-                {"help",   no_argument,       0, 'h'},
-                {"width",  required_argument, 0, 'x'},
-                {"height", required_argument, 0, 'y'},
-                {"player", required_argument, 0, 'p'},
-                {"enemy",  required_argument, 0, 'e'}
+                {"help", no_argument, nullptr, 'h'},
+                {"map", required_argument, nullptr, 'm'},
+                {"player", required_argument, nullptr, 'p'},
+                {"enemy", required_argument, nullptr, 'e'}
         };
 
 void PrintUsage()
 {
     fprintf(stderr, "Usage: gridserver –x NUM –y NUM\n");
     std::cout << "Usage: robotcommander -x NUM -y NUM -p NUM -e NUM" << std::endl;
-    std::cout << "\t-x, --width\t\tset width" << std::endl;
-    std::cout << "\t-y, --height\tset height" << std::endl;
+    std::cout << "\t-m, --map\t\trelative or absolute path to the .map file" << std::endl;
     std::cout << "\t-p, --player\tset number of player robots max. 9" << std::endl;
     std::cout << "\t-e, --enemy\t\tset number of enemy robots max. 9" << std::endl;
     std::exit(EXIT_FAILURE);
@@ -26,19 +24,17 @@ void PrintUsage()
 int main(int argc, char *argv[])
 {
     int c = 0;
-    int optionXCounter = 0;
-    int optionYCounter = 0;
+    int optionMCounter = 0;
     int optionPCounter = 0;
     int optionECounter = 0;
 
-    int width = 0;
-    int height = 0;
+    std::string path;
     int playerCount = 0;
     int enemyCount = 0;
 
     int optionIndex = 0;
 
-    while((c = getopt_long(argc, argv, "hx:y:p:e:", longOptions, &optionIndex)) != EOF)
+    while((c = getopt_long(argc, argv, "hm:p:e:", longOptions, &optionIndex)) != EOF)
     {
         switch(c)
         {
@@ -46,22 +42,13 @@ int main(int argc, char *argv[])
                 PrintUsage();
                 break;
 
-            case 'x':
-                if(optionXCounter)
+            case 'm':
+                if(optionMCounter)
                 {
                     PrintUsage();
                 }
-                optionXCounter++;
-                width = std::stoi(optarg, nullptr, 10);
-                break;
-
-            case 'y':
-                if(optionYCounter)
-                {
-                    PrintUsage();
-                }
-                optionYCounter++;
-                height = std::stoi(optarg, nullptr, 10);
+                optionMCounter++;
+                path = optarg;
                 break;
 
             case 'p':
@@ -88,12 +75,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(optind != 9 || argc != 9)
+    if(optind != 7 || argc != 7)
     {
         PrintUsage();
     }
 
-    auto *gameManager = new GameManager(new Map(width, height), playerCount, enemyCount);
+    auto *gameManager = new GameManager(new Map(path), playerCount, enemyCount);
 
     int input = 0;
     while(true)

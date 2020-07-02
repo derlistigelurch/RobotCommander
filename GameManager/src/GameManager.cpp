@@ -1,4 +1,6 @@
-#include "Header/GameManager.h"
+#include "../include/GameManager.h"
+
+#include <utility>
 
 GameManager::GameManager(Map *map, int players, int enemies)
 {
@@ -50,7 +52,7 @@ void GameManager::DeletePipe()
 void GameManager::LoadConfig()
 {
     std::string line;
-    std::ifstream configFile("../RobotCommander.config");
+    std::ifstream configFile("../config/RobotCommander.config");
 
     if(configFile.is_open())
     {
@@ -69,8 +71,9 @@ void GameManager::LoadConfig()
 
 int GameManager::Input(std::string string)
 {
+    this->WriteToPipe();
     // TODO: extract player/enemy/action/direction from string
-    std::string input = this->ToLower(string);
+    std::string input = this->ToLower(std::move(string));
     if(input == "show")
     {
         // TODO: Show stats of the tile or robot

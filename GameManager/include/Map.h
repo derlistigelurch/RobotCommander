@@ -5,6 +5,8 @@
 #include <string>
 #include <fstream>
 
+#define DELIMITER 'x'
+
 class Map
 {
 private:
@@ -22,6 +24,11 @@ private:
      * Deletes the grid and free memory
      */
     void DeleteGrid();
+
+    /**
+     * Loads the Width and eight from a .map file
+     */
+    void getDimensions();
 
     int height;
     int width;
