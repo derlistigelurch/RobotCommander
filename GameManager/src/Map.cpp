@@ -1,12 +1,14 @@
 #include "Header/Map.h"
 
-Map::Map(int width, int height)
-{
-    this->width = width;
-    this->height = height;
+#include <utility>
+#include <fstream>
+#include <iostream>
 
+Map::Map(std::string path)
+{
+    this->path = std::move(path);
     this->CreateGrid();
-    this->FillGrid();
+    this->LoadGrid();
 }
 
 Map::~Map()
@@ -22,14 +24,23 @@ void Map::CreateGrid()
     }
 }
 
-void Map::FillGrid()
+void Map::LoadGrid()
 {
-    for(int x = 0; x < this->width; x++)
+    std::string line;
+    std::ifstream map(this->path);
+
+    if(map.is_open())
     {
-        for(int y = 0; y < this->height; y++)
+        while(getline(map, line))
         {
-            this->grid[x][y] = 'F';
+            // std::cout << line;
         }
+        map.close();
+    }
+    else
+    {
+        std::cerr << "ERROR: Unable to read map from " << this->path << std::endl;
+        std::exit(EXIT_FAILURE);
     }
 }
 

@@ -1,7 +1,5 @@
 #include "Header/GameManager.h"
 
-#include <utility>
-
 GameManager::GameManager(Map *map, int players, int enemies)
 {
     this->map = map;
@@ -49,16 +47,6 @@ void GameManager::DeletePipe()
     }
 }
 
-void GameManager::Start()
-{
-
-}
-
-void GameManager::Exit()
-{
-
-}
-
 void GameManager::LoadConfig()
 {
     std::string line;
@@ -81,12 +69,37 @@ void GameManager::LoadConfig()
 
 int GameManager::Input(std::string string)
 {
+    // TODO: extract player/enemy/action/direction from string
     std::string input = this->ToLower(string);
     if(input == "show")
     {
-
+        // TODO: Show stats of the tile or robot
+        std::cout << input << std::endl;
+        return EXIT_SUCCESS;
     }
-    return EXIT_SUCCESS;
+
+    if(input == "attack")
+    {
+        // TODO: Attack enemy Robot
+        std::cout << input << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    if(input == "retreat")
+    {
+        // TODO: End fight
+        std::cout << input << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    if(input == "move")
+    {
+        // TODO: Move Robot around the map
+        std::cout << input << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    return EXIT_FAILURE;
 }
 
 std::string GameManager::ToLower(std::string string)

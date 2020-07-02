@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 class Map
 {
@@ -15,7 +16,7 @@ private:
     /**
      * Fills the grid with tiletypes (e.g. 'M' -> Mountain)
      */
-    void FillGrid();
+    void LoadGrid();
 
     /**
      * Deletes the grid and free memory
@@ -24,15 +25,15 @@ private:
 
     int height;
     int width;
+    std::string path;
     std::vector<std::vector<char>> grid;
 
 public:
     /**
-     * Creates a new map with the given width and height
-     * @param width
-     * @param height
+     * Creates a new map with a given path to a .map file
+     * @param path absolute or relative path to a valid .map file
      */
-    Map(int width, int height);
+    explicit Map(std::string path);
 
     ~Map();
 

@@ -61,10 +61,6 @@ public:
      * @return returns EXIT_SUCCESS(0) on success otherwise EXIT_FAILURE(1)
      */
     int Input(std::string string);
-
-    void Start();
-
-    void Exit();
 };
 
 
