@@ -16,7 +16,6 @@ Map::~Map()
 
 void Map::CreateGrid()
 {
-    //this->grid = std::vector<char>();
     for(int i = 0; i < this->width; i++)
     {
         this->grid.emplace_back(this->height);

@@ -1,6 +1,8 @@
 #include "Header/GameManager.h"
 
-GameManager::GameManager(Map *map)
+#include <utility>
+
+GameManager::GameManager(Map *map, int players, int enemies)
 {
     this->map = map;
     this->LoadConfig();
@@ -9,10 +11,11 @@ GameManager::GameManager(Map *map)
 
 GameManager::~GameManager()
 {
+    this->DeletePipe();
     delete this->map;
 }
 
-int GameManager::WriteToPipe()
+void GameManager::WriteToPipe()
 {
     std::ofstream pipe(this->mapPipe);
 
@@ -74,4 +77,24 @@ void GameManager::LoadConfig()
         std::cerr << "ERROR: Unable to read from config file";
         std::exit(EXIT_FAILURE);
     }
+}
+
+int GameManager::Input(std::string string)
+{
+    std::string input = this->ToLower(string);
+    if(input == "show")
+    {
+
+    }
+    return EXIT_SUCCESS;
+}
+
+std::string GameManager::ToLower(std::string string)
+{
+    for(auto &c : string)
+    {
+        c = std::tolower(c);
+    }
+
+    return string;
 }
