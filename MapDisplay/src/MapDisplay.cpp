@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "TileTypes.h"
-#include "Colors.h"
+#include "../include/TileTypes.h"
+#include "../include/Colors.h"
 
 int main()
 {

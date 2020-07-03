@@ -199,3 +199,4 @@ fabric.properties
 # exclude .idea folder
 GameManager/.idea/
 MapDisplay/.idea/
+*/CMakeLists.txt
