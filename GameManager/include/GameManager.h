@@ -51,13 +51,11 @@ private:
     int enemyCount;
     std::string path;
     std::string mapPipe;
-    const __mode_t PIPE_MODE = 0600;
     Map *map;
 
     static const int MOVE = 1;
     static const int ATTACK = 2;
     static const int RETREAT = 3;
-    static const int ERRNO_FILE_EXISTS = 17;
 
 public:
     GameManager();

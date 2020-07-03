@@ -15,7 +15,7 @@ public:
 
     void Exit();
 
-    static void ShowMainScreen() ;
+    static std::string ShowMainScreen() ;
 };
 
 
