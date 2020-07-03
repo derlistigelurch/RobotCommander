@@ -10,6 +10,8 @@
 
 #include "Map.h"
 
+#define FILE_EXISTS 17
+
 class GameManager
 {
 private:
@@ -40,18 +42,20 @@ private:
      */
     std::string ToLower(std::string string);
 
+    /**
+     * Initializes private variables
+     */
+    void Initialize();
+
+    int playerCount;
+    int enemyCount;
+    std::string path;
     std::string mapPipe;
     const __mode_t PIPE_MODE = 0600;
     Map *map;
 
 public:
-    /**
-     * Creates a new instance of the GameManager class
-     * @param map - Map which stores the terrain and player/robot position
-     * @param players - number of players max. 9
-     * @param enemies - number of enemies max. 9
-     */
-    GameManager(Map *map, int players, int enemies);
+    GameManager();
 
     ~GameManager();
 
@@ -61,6 +65,8 @@ public:
      * @return returns EXIT_SUCCESS(0) on success otherwise EXIT_FAILURE(1)
      */
     int Input(std::string string);
+
+    void Fight();
 };
 
 

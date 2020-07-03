@@ -2,11 +2,11 @@
 
 #include <utility>
 
-GameManager::GameManager(Map *map, int players, int enemies)
+GameManager::GameManager()
 {
-    this->map = map;
     this->LoadConfig();
     this->CreatePipe();
+    this->Initialize();
 }
 
 GameManager::~GameManager()
@@ -33,7 +33,7 @@ void GameManager::WriteToPipe()
 
 void GameManager::CreatePipe()
 {
-    if(mkfifo(this->mapPipe.c_str(), this->PIPE_MODE) == -1)
+    if(mkfifo(this->mapPipe.c_str(), this->PIPE_MODE) == -1 && errno != FILE_EXISTS)
     {
         std::cerr << "ERROR: Unable to create the pipe" << std::endl;
         std::exit(EXIT_FAILURE);
@@ -71,9 +71,16 @@ void GameManager::LoadConfig()
 
 int GameManager::Input(std::string string)
 {
-    this->WriteToPipe();
-    // TODO: extract player/enemy/action/direction from string
     std::string input = this->ToLower(std::move(string));
+
+    if(input == "move")
+    {
+        // TODO: Move Robot around the map
+        std::cout << input << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    // TODO: extract player/enemy/action/direction from string
     if(input == "show")
     {
         // TODO: Show stats of the tile or robot
@@ -95,13 +102,6 @@ int GameManager::Input(std::string string)
         return EXIT_SUCCESS;
     }
 
-    if(input == "move")
-    {
-        // TODO: Move Robot around the map
-        std::cout << input << std::endl;
-        return EXIT_SUCCESS;
-    }
-
     return EXIT_FAILURE;
 }
 
@@ -113,4 +113,50 @@ std::string GameManager::ToLower(std::string string)
     }
 
     return string;
+}
+
+void GameManager::Initialize()
+{
+    while(true)
+    {
+        std::cout << "Enter a valid path to your map" << std::endl;
+        std::cout << "_>> ";
+        std::cin >> this->path;
+        std::fstream f(this->path);
+        if(f.is_open())
+        {
+            this->map = new Map(this->path);
+            break;
+        }
+
+        std::cerr << "ERROR: Invalid path" << std::endl;
+    }
+
+    while(true)
+    {
+        std::cout << "Enter the number of player robots" << std::endl;
+        std::cout << "_>> ";
+        std::cin >> this->playerCount;
+        if(this->playerCount > 0 && this->playerCount < 10)
+        {
+            break;
+        }
+
+        std::cerr << "ERROR: Invalid number of players" << std::endl;
+    }
+
+    while(true)
+    {
+        std::cout << "Enter the number of enemy robots" << std::endl;
+        std::cout << "_>> ";
+        std::cin >> this->enemyCount;
+        if(this->enemyCount > 0 && this->enemyCount < 10)
+        {
+            break;
+        }
+
+        std::cerr << "ERROR: Invalid number of enemies" << std::endl;
+    }
+
+    this->WriteToPipe();
 }

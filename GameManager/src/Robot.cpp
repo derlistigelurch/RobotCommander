@@ -1,19 +1,38 @@
 #include "../include/Robot.h"
 
+#include <utility>
+
 Robot::Robot(int id, std::string name, char symbol, Point *position)
 {
     this->id = id;
-    this->name = name;
+    this->name = std::move(name);
     this->symbol = symbol;
     this->position = position;
 }
 
-int Robot::Attack(Robot robot)
+void Robot::Attack(Robot &robot) const
 {
-    return 0;
+    robot.health - this->damage;
 }
 
-int Robot::Move(Directions direction)
+void Robot::Move(Directions direction) const
 {
-    return 0;
+    switch(direction)
+    {
+        case Directions::NORTH:
+            this->position->y++;
+            break;
+
+        case Directions::EAST:
+            this->position->x++;
+            break;
+
+        case Directions::SOUTH:
+            this->position->y--;
+            break;
+
+        case Directions::WEST:
+            this->position->x--;
+            break;
+    }
 }

@@ -14,14 +14,15 @@ public:
 
     virtual ~Robot() = default;
 
-    int Attack(Robot robot);
+    void Attack(Robot &robot) const;
 
-    int Move(Directions direction);
+    void Move(Directions direction) const;
 
     int id;
     int attackRadius;
     int health;
     int movementSpeed;
+    int damage;
     Point *position;
     char symbol;
     std::string name;

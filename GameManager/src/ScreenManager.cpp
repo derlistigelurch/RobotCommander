@@ -1,6 +1,11 @@
-#include <iostream>
+#include "../include/ScreenManager.h"
 
-void showMainScreen()
+void ScreenManager::Exit()
+{
+
+}
+
+void ScreenManager::ShowMainScreen()
 {
     std::cout << " ____       _           _   \n"
                  "|  _ \\ ___ | |__   ___ | |_ \n"
@@ -13,14 +18,15 @@ void showMainScreen()
                  "| |__| (_) | | | | | | | | | | | (_| | | | | (_| |  __/ |   \n"
                  " \\____\\___/|_| |_| |_|_| |_| |_|\\__,_|_| |_|\\__,_|\\___|_| "
               << std::endl << std::endl << std::flush;
+
+    std::cout << "1 - Initialize" << std::endl;
+    std::cout << "2 - Create new Robot" << std::endl;
+    std::cout << "3 - Exit" << std::endl << std::endl;
 }
 
-void Start()
+void ScreenManager::FightMenu()
 {
-
-}
-
-void Exit()
-{
-
+    std::cout << "1 - Move" << std::endl;
+    std::cout << "2 - Attack" << std::endl;
+    std::cout << "3 - Retreat" << std::endl << std::endl;
 }
