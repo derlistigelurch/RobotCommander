@@ -1,7 +1,6 @@
 #include "../include/Map.h"
 
 #include <utility>
-#include <fstream>
 #include <iostream>
 
 Map::Map(std::string path)

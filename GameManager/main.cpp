@@ -1,22 +1,19 @@
 #include <iostream>
-#include <getopt.h>
 
 #include "include/GameManager.h"
 #include "include/ScreenManager.h"
 
-#define START 1
-#define CREATOR 2
-#define EXIT 3
+static const int START = 1;
+static const int CREATOR = 2;
+static const int EXIT = 3;
 
 int main(int argc, char *argv[])
 {
-    auto *screenManager = new ScreenManager();
-
     int input = 0;
 
     while(true)
     {
-        screenManager->ShowMainScreen();
+        ScreenManager::ShowMainScreen();
         std::cout << "_>> ";
         std::cin >> input;
         switch(input)
@@ -25,30 +22,23 @@ int main(int argc, char *argv[])
             {
                 auto *gameManager = new GameManager();
 
-                while(true)
-                {
-                    screenManager->FightMenu();
-                    // TODO: move to gameManager Input function
-                    std::cin >> input;
-                    if((int) input == 0)
-                    {
-                        break;
-                    }
-                    std::string string;
-                    std::cin >> string;
-                    gameManager->Input(string);
-                }
+                gameManager->Fight();
 
                 delete gameManager;
                 break;
             }
 
             case CREATOR:
+                // TODO: Open Creator
                 break;
 
             case EXIT:
-                delete (screenManager);
                 return EXIT_SUCCESS;
+
+            default:
+                std::cerr << "ERROR: Invalid symbol" << std::endl;
+                break;
+
         }
     }
 }

@@ -1,11 +1,10 @@
 #ifndef GAMEMANAGER_MAP_H
 #define GAMEMANAGER_MAP_H
 
+
 #include <vector>
 #include <string>
 #include <fstream>
-
-#define DELIMITER 'x'
 
 class Map
 {
@@ -34,6 +33,8 @@ private:
     int width;
     std::string path;
     std::vector<std::vector<char>> grid;
+
+    static const char DELIMITER = 'x';
 
 public:
     /**

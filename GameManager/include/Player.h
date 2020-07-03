@@ -7,8 +7,6 @@
 class Player : public Robot
 {
     Player(int id, std::string name, char symbol, Point *position);
-
-
 };
 
 

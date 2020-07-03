@@ -1,9 +1,11 @@
 #include "../include/GameManager.h"
 
-#include <utility>
-
 GameManager::GameManager()
 {
+    this->playerCount = 0;
+    this->enemyCount = 0;
+    this->map = nullptr;
+
     this->LoadConfig();
     this->CreatePipe();
     this->Initialize();
@@ -33,7 +35,7 @@ void GameManager::WriteToPipe()
 
 void GameManager::CreatePipe()
 {
-    if(mkfifo(this->mapPipe.c_str(), this->PIPE_MODE) == -1 && errno != FILE_EXISTS)
+    if(mkfifo(this->mapPipe.c_str(), this->PIPE_MODE) == -1 && errno != ERRNO_FILE_EXISTS)
     {
         std::cerr << "ERROR: Unable to create the pipe" << std::endl;
         std::exit(EXIT_FAILURE);
@@ -69,40 +71,29 @@ void GameManager::LoadConfig()
     }
 }
 
-int GameManager::Input(std::string string)
+void GameManager::Fight()
 {
-    std::string input = this->ToLower(std::move(string));
-
-    if(input == "move")
+    while(true)
     {
-        // TODO: Move Robot around the map
-        std::cout << input << std::endl;
-        return EXIT_SUCCESS;
+        ScreenManager::FightMenu();
+        int input = 0;
+        std::cin >> input;
+        switch(input)
+        {
+            case MOVE:
+                std::cout << "move" << std::endl;
+                break;
+            case ATTACK:
+                std::cout << "attack" << std::endl;
+                break;
+            case RETREAT:
+                std::cout << "retreat" << std::endl;
+                return;
+            default:
+                std::cout << "move" << std::endl;
+                break;
+        }
     }
-
-    // TODO: extract player/enemy/action/direction from string
-    if(input == "show")
-    {
-        // TODO: Show stats of the tile or robot
-        std::cout << input << std::endl;
-        return EXIT_SUCCESS;
-    }
-
-    if(input == "attack")
-    {
-        // TODO: Attack enemy Robot
-        std::cout << input << std::endl;
-        return EXIT_SUCCESS;
-    }
-
-    if(input == "retreat")
-    {
-        // TODO: End fight
-        std::cout << input << std::endl;
-        return EXIT_SUCCESS;
-    }
-
-    return EXIT_FAILURE;
 }
 
 std::string GameManager::ToLower(std::string string)

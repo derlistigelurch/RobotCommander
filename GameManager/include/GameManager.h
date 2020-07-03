@@ -1,6 +1,7 @@
 #ifndef GAMEMANAGER_GAMEMANAGER_H
 #define GAMEMANAGER_GAMEMANAGER_H
 
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -9,8 +10,7 @@
 #include <sys/stat.h>
 
 #include "Map.h"
-
-#define FILE_EXISTS 17
+#include "ScreenManager.h"
 
 class GameManager
 {
@@ -37,7 +37,7 @@ private:
 
     /**
      * Convert a string to lowercase
-     * @param string - Input string
+     * @param string - Fight string
      * @return returns the converted string
      */
     std::string ToLower(std::string string);
@@ -54,6 +54,11 @@ private:
     const __mode_t PIPE_MODE = 0600;
     Map *map;
 
+    static const int MOVE = 1;
+    static const int ATTACK = 2;
+    static const int RETREAT = 3;
+    static const int ERRNO_FILE_EXISTS = 17;
+
 public:
     GameManager();
 
@@ -61,11 +66,7 @@ public:
 
     /**
      * Parses the input and sends it to the correct receiver
-     * @param string - User input
-     * @return returns EXIT_SUCCESS(0) on success otherwise EXIT_FAILURE(1)
      */
-    int Input(std::string string);
-
     void Fight();
 };
 

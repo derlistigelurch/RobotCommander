@@ -1,6 +1,7 @@
 #ifndef GAMEMANAGER_SCREENMANAGER_H
 #define GAMEMANAGER_SCREENMANAGER_H
 
+
 #include <iostream>
 
 class ScreenManager
@@ -10,11 +11,11 @@ public:
 
     ~ScreenManager() = default;
 
-    void FightMenu();
+    static void FightMenu() ;
 
     void Exit();
 
-    void ShowMainScreen();
+    static void ShowMainScreen() ;
 };
 
 
