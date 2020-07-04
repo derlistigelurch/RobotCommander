@@ -8,12 +8,6 @@
 
 int main()
 {
-    // 1. create msgqueue
-    // 2. write to msgqueue
-    // 3. read from msgqueue
-    // 4. process data
-    // 5. send response
-
     auto *messageManager = new MessageManager();
     messageManager->CreateMsgQueue(MessageManager::IO);
     Message message{};
@@ -24,7 +18,6 @@ int main()
         std::fill(message.text, message.text + sizeof(message.text), 0);
 
         message = messageManager->ReceiveMessage(MessageManager::IO);
-        std::cout << message.text << std::endl;
         content = "";
 
         try
@@ -32,25 +25,33 @@ int main()
             switch(std::stoi(message.text, nullptr, 10))
             {
                 case 1:
-                {
                     // create gameMessageQueue
                     messageManager->CreateMsgQueue(MessageManager::Sender::GAME);
 
+                    // Create Pipes
+                    messageManager->CreatePipe(MessageManager::Sender::MAP);
+                    messageManager->CreatePipe(MessageManager::Sender::LOG);
+                    messageManager->CreatePipe(MessageManager::Sender::STATS);
+
                     // automatically waits for process to finish
-                    system("../../GameManager/cmake-build-debug/GameManager");
+                    system(ConfigManager().gameManagerPath.c_str());
 
                     // delete gameMessageQueue
                     messageManager->DeleteMsgQueue(MessageManager::Sender::GAME);
+                    messageManager->DeletePipe(MessageManager::Sender::MAP);
+                    messageManager->DeletePipe(MessageManager::Sender::LOG);
+                    messageManager->DeletePipe(MessageManager::Sender::LOG);
                     break;
 
-                }
                 case 2:
                     break;
+
                 case 3:
                     delete messageManager;
                     return EXIT_SUCCESS;
+
                 default:
-                    throw std::bad_cast();
+                    break;
             }
         }
         catch(const std::exception &e)

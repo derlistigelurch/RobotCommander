@@ -12,7 +12,7 @@ ConfigManager::ConfigManager()
 void ConfigManager::LoadConfig()
 {
     std::string line;
-    std::ifstream configFile("../../config/RobotCommander.config");
+    std::ifstream configFile(CONFIG_PATH);
 
     if(!configFile.is_open())
     {
@@ -29,10 +29,17 @@ void ConfigManager::LoadConfig()
 
         line = ConfigManager::RemoveNewLine(line);
 
-        if(line == ConfigManager::IO_PIPE_IDENTIFIER)
+        if(line == ConfigManager::LOG_PIPE_IDENTIFIER)
         {
             getline(configFile, line);
-            this->ioPipe = ConfigManager::RemoveNewLine(line);
+            this->logPipe = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
+
+        if(line == ConfigManager::STATS_PIPE_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->statsPipe = ConfigManager::RemoveNewLine(line);
             continue;
         }
 
@@ -40,13 +47,6 @@ void ConfigManager::LoadConfig()
         {
             getline(configFile, line);
             this->mapPipe = ConfigManager::RemoveNewLine(line);
-            continue;
-        }
-
-        if(line == ConfigManager::WORKSHOP_PIPE_IDENTIFIER)
-        {
-            getline(configFile, line);
-            this->workshopPipe = ConfigManager::RemoveNewLine(line);
             continue;
         }
 
@@ -63,13 +63,22 @@ void ConfigManager::LoadConfig()
             this->gameKey = stoi(ConfigManager::RemoveNewLine(line), nullptr, 10);
             continue;
         }
+
         if(line == ConfigManager::PERMISSION_IDENTIFIER)
         {
             getline(configFile, line);
             this->mode = stoi(ConfigManager::RemoveNewLine(line), nullptr, 8);
             continue;
         }
+
+        if(line == ConfigManager::GM_PATH_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->gameManagerPath = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
     }
+
     configFile.close();
 }
 

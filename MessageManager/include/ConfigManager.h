@@ -15,25 +15,28 @@ public:
      */
     void LoadConfig();
 
-    std::string ioPipe;
-    std::string workshopPipe;
     std::string mapPipe;
+    std::string logPipe;
+    std::string statsPipe;
+    std::string gameManagerPath;
 
     int ioKey;
     int gameKey;
-    int workshopKey;
 
     __mode_t mode;
 
-    inline static const std::string IO_PIPE_IDENTIFIER = "IO";
-    inline static const std::string WORKSHOP_PIPE_IDENTIFIER = "WORKSHOP";
     inline static const std::string MAP_PIPE_IDENTIFIER = "MAP";
+    inline static const std::string LOG_PIPE_IDENTIFIER = "LOG";
+    inline static const std::string STATS_PIPE_IDENTIFIER = "STATS";
     inline static const std::string IO_KEY_IDENTIFIER = "IO_KEY";
     inline static const std::string GAME_KEY_IDENTIFIER = "GAME_KEY";
     inline static const std::string PERMISSION_IDENTIFIER = "PERMISSION";
+    inline static const std::string GM_PATH_IDENTIFIER = "GAME_MANAGER_PATH";
 
 private:
     static std::string RemoveNewLine(std::string string);
+
+    inline static const std::string CONFIG_PATH = "../../config/RobotCommander.config";
 };
 
 

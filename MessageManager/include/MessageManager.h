@@ -16,66 +16,30 @@ public:
     ~MessageManager();
 
     /**
-     * Creates a new pipe in the directory which is stated in the RobotCommander.config
-     * @param pipe - Path to the pipe
+     * Creates a new pipe in the directory which is stated in the RobotCommander.config, does nothing if file exists
+     * @param identifier - string identifier to create the correct pipe
      */
-    void CreatePipe();
+    void CreatePipe(const std::string &identifier);
 
     /**
-     * Deletes the pipe
-     * @param pipe - Path to the pipe
+     * Deletes the pipe, nothing happens if file not exists
+     * @param identifier - string identifier to delete the correct pipe
      */
-    void DeletePipe();
-
-    /**
-     * Write something to the Pipe
-     * @param content
-     */
-    void WriteToPipe(const std::string &content);
-
-    /**
-     * Reads input from a pipe
-     */
-    void ReadFromPipe();
+    void DeletePipe(const std::string &identifier);
 
     /**
      * Creates a new messagequeue, saves id into ioMessageId
-     * @param identifier - key identifier as a string to get the correct key
+     * @param identifier - string identifier to get the correct key
      */
-    void CreateMsgQueue(const std::string& identifier);
+    void CreateMsgQueue(const std::string &identifier);
 
     /**
-     *
-     * @param identifier
+     * Deletes a messagequeue, exits on failure
+     * @param identifier - string identifier to delete the correct messagequeue
      */
-    void DeleteMsgQueue(const std::string& identifier) const;
-
-    /**
-     * Sends a new Message to the Message queue
-     * @param type
-     * @param text
-     * @param identifier
-     */
-    // void SendMessage(long type, const std::string &text, const std::string& identifier) const;
-
-    /**
-     * Receives a message from the messagequeue (waits for message)
-     * @return returns a new message struct from the messagequeue
-     */
-    // Message ReceiveMessage(const std::string& identifier) const;
-
-    // int ioMessageId;
-    // int gameMessageId;
-    // inline static const std::string IO = "IO";
-    // inline static const std::string GAME = "GAME";
+    void DeleteMsgQueue(const std::string &identifier) const;
 
 private:
-    // int getId(const std::string &identifier) const;
-
-    // void setId(int id, const std::string &identifier);
-
-    // int getKey(const std::string &identifier) const;
-
     static const int ERRNO_FILE_EXISTS = 17;
     static const int ERRNO_FILE_NOT_FOUND = 2;
     static const int FIGHT = 1;

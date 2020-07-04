@@ -4,6 +4,7 @@
 #include <sys/msg.h>
 
 #include <iostream>
+#include <fstream>
 #include <cstring>
 
 #include "../../MessageManager/include/ConfigManager.h"
@@ -70,5 +71,66 @@ int Sender::getId(const std::string &identifier) const
     if(identifier == GAME)
     {
         return this->gameMessageId;
+    }
+}
+
+void Sender::GetMessageQueue(const std::string &identifier)
+{
+    this->setId(msgget(getKey(identifier), ConfigManager().mode), identifier);
+    if(this->getId(identifier) == EOF)
+    {
+        std::cerr << "Can't access message queue" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+}
+
+void Sender::WriteToPipe(const std::string &content, const std::string &identifier) const
+{
+    std::fstream pipe(this->getPipe(identifier));
+
+    if(!pipe.is_open())
+    {
+        std::cerr << "ERROR: Unable to open file";
+        std::exit(EXIT_FAILURE);
+    }
+
+    pipe << content;
+    pipe.close();
+}
+
+void Sender::ReadFromPipe(const std::string &identifier) const
+{
+    std::fstream pipe(this->getPipe(identifier));
+    if(!pipe.is_open())
+    {
+        std::cerr << "ERROR: Unable to read from pipe";
+        std::exit(EXIT_FAILURE);
+    }
+
+    std::string line;
+
+    while(getline(pipe, line))
+    {
+        std::cout << line << std::endl;
+    }
+
+    pipe.close();
+}
+
+std::string Sender::getPipe(const std::string &identifier) const
+{
+    if(identifier == MAP)
+    {
+        return ConfigManager().mapPipe;
+    }
+
+    if(identifier == LOG)
+    {
+        return ConfigManager().logPipe;
+    }
+
+    if(identifier == STATS)
+    {
+        return ConfigManager().statsPipe;
     }
 }

@@ -29,10 +29,30 @@ protected:
      */
     int getKey(const std::string &identifier) const;
 
+    /**
+     *
+     * @param identifier
+     * @return
+     */
+    std::string getPipe(const std::string &identifier) const;
+
 public:
     Sender() = default;
 
     virtual ~Sender() = default;
+
+    /**
+     * Write something to the Pipe
+     * @param content
+     * @param identifier
+     */
+    virtual void WriteToPipe(const std::string &content, const std::string &identifier) const;
+
+    /**
+     * Reads input from a pipe
+     * @param identifier
+     */
+    virtual void ReadFromPipe(const std::string &identifier) const;
 
     /**
      * Sends a new Message to the Message queue
@@ -48,11 +68,16 @@ public:
      */
     virtual Message ReceiveMessage(const std::string& identifier) const;
 
+    virtual void GetMessageQueue(const std::string& identifier);
+
     int ioMessageId;
     int gameMessageId;
 
     inline static const std::string IO = "IO";
     inline static const std::string GAME = "GAME";
+    inline static const std::string MAP = "MAP";
+    inline static const std::string LOG = "LOG";
+    inline static const std::string STATS = "STATS";
 };
 
 
