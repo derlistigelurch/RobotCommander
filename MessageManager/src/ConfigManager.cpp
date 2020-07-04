@@ -56,6 +56,13 @@ void ConfigManager::LoadConfig()
             this->ioKey = stoi(ConfigManager::RemoveNewLine(line), nullptr, 10);
             continue;
         }
+
+        if(line == ConfigManager::GAME_KEY_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->gameKey = stoi(ConfigManager::RemoveNewLine(line), nullptr, 10);
+            continue;
+        }
         if(line == ConfigManager::PERMISSION_IDENTIFIER)
         {
             getline(configFile, line);

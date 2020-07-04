@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <cstring>
 
 #include "../include/Message.h"
 #include "../include/ConfigManager.h"
@@ -18,7 +19,7 @@ MessageManager::MessageManager()
 MessageManager::~MessageManager()
 {
     this->DeletePipe();
-    this->DeleteMsgQueue();
+    this->DeleteMsgQueue(IO);
 }
 
 void MessageManager::CreatePipe()
@@ -40,7 +41,7 @@ void MessageManager::DeletePipe()
     }
 }
 
-void MessageManager::WriteToPipe(const std::string &string)
+void MessageManager::WriteToPipe(const std::string &content)
 {
     std::fstream pipe(ConfigManager().ioPipe);
 
@@ -50,7 +51,7 @@ void MessageManager::WriteToPipe(const std::string &string)
         std::exit(EXIT_FAILURE);
     }
 
-    pipe << string;
+    pipe << content;
     pipe.close();
 }
 
@@ -64,6 +65,7 @@ void MessageManager::ReadFromPipe()
     }
 
     std::string line;
+
     while(getline(pipe, line))
     {
         std::cout << line << std::endl;
@@ -71,46 +73,86 @@ void MessageManager::ReadFromPipe()
     pipe.close();
 }
 
-void MessageManager::CreateMsgQueue()
+void MessageManager::CreateMsgQueue(const std::string &identifier)
 {
-    int messageId = 0;
-
-    if((messageId = msgget(ConfigManager().ioKey, ConfigManager().mode | IPC_CREAT)) == -1)
+    this->setId(msgget(getKey(identifier), ConfigManager().mode | IPC_CREAT), identifier);
+    if(this->getId(identifier) == EOF)
     {
         std::cerr << "ERROR: Creating message queue" << std::endl;
         std::exit(EXIT_FAILURE);
     }
-
-    this->ioMessageId = messageId;
 }
 
-void MessageManager::DeleteMsgQueue() const
+void MessageManager::DeleteMsgQueue(const std::string &identifier) const
 {
-    if(msgctl(this->ioMessageId, IPC_RMID, nullptr) == EOF)
+    if(msgctl(this->getId(identifier), IPC_RMID, nullptr) == EOF)
     {
         fprintf(stderr, "Message queue could not be deleted.\n");
         exit(EXIT_FAILURE);
     }
 }
 
-void MessageManager::SendMessage()
+/*void MessageManager::SendMessage(long type, const std::string &text, const std::string &identifier) const
 {
-    struct Message message;
-    if(msgsnd(this->ioMessageId, &message, sizeof(message) - sizeof(long), IPC_NOWAIT) == EOF)
+    struct Message message{};
+    message.type = type;
+    std::strncpy(message.text, text.c_str(), text.length());
+
+    if(msgsnd(this->getId(identifier), &message, sizeof(message) - sizeof(long), IPC_NOWAIT) == EOF)
     {
         std::cerr << "ERROR: Can't send message" << std::endl;
         std::exit(EXIT_FAILURE);
     }
-}
+}*/
 
-std::string MessageManager::ReceiveMessage() const
+/*Message MessageManager::ReceiveMessage(const std::string &identifier) const
 {
     struct Message message{};
-    if(msgrcv(this->ioMessageId, &message, sizeof(message) - sizeof(long), 0, 0) == EOF)
+
+    if(msgrcv(this->getId(identifier), &message, sizeof(message) - sizeof(long), 0, 0) == EOF)
     {
         std::cerr << "ERROR: Can't receive from message queue" << std::endl;
         std::exit(EXIT_FAILURE);
     }
-    std::string a = message.text;
-    return a;
-}
+
+    return message;
+}*/
+
+/*int MessageManager::getId(const std::string &identifier) const
+{
+    if(identifier == IO)
+    {
+        return this->ioMessageId;
+    }
+
+    if(identifier == GAME)
+    {
+        return this->gameMessageId;
+    }
+}*/
+
+/*void MessageManager::setId(int id, const std::string &identifier)
+{
+    if(identifier == IO)
+    {
+        this->ioMessageId = id;
+    }
+
+    if(identifier == GAME)
+    {
+        this->gameMessageId = id;
+    }
+}*/
+
+/*int MessageManager::getKey(const std::string &identifier) const
+{
+    if(identifier == IO)
+    {
+        return ConfigManager().ioKey;
+    }
+
+    if(identifier == GAME)
+    {
+        return ConfigManager().gameKey;
+    }
+}*/

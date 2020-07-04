@@ -6,7 +6,7 @@
 struct Message
 {
     long type;
-    char text[256];
+    char text[1024];
 };
 
 #endif //MESSAGEMANAGER_MESSAGE_H

@@ -6,8 +6,9 @@
 
 #include <string>
 #include "Message.h"
+#include "../../IOManager/include/Sender.h"
 
-class MessageManager
+class MessageManager : public Sender
 {
 public:
     MessageManager();
@@ -28,26 +29,58 @@ public:
 
     /**
      * Write something to the Pipe
+     * @param content
      */
-    void WriteToPipe(const std::string &string);
+    void WriteToPipe(const std::string &content);
 
     /**
      * Reads input from a pipe
      */
     void ReadFromPipe();
 
-    void CreateMsgQueue();
+    /**
+     * Creates a new messagequeue, saves id into ioMessageId
+     * @param identifier - key identifier as a string to get the correct key
+     */
+    void CreateMsgQueue(const std::string& identifier);
 
-    void DeleteMsgQueue() const;
+    /**
+     *
+     * @param identifier
+     */
+    void DeleteMsgQueue(const std::string& identifier) const;
 
-    void SendMessage();
+    /**
+     * Sends a new Message to the Message queue
+     * @param type
+     * @param text
+     * @param identifier
+     */
+    // void SendMessage(long type, const std::string &text, const std::string& identifier) const;
 
-    std::string ReceiveMessage() const;
+    /**
+     * Receives a message from the messagequeue (waits for message)
+     * @return returns a new message struct from the messagequeue
+     */
+    // Message ReceiveMessage(const std::string& identifier) const;
 
-    int ioMessageId;
+    // int ioMessageId;
+    // int gameMessageId;
+    // inline static const std::string IO = "IO";
+    // inline static const std::string GAME = "GAME";
+
 private:
+    // int getId(const std::string &identifier) const;
+
+    // void setId(int id, const std::string &identifier);
+
+    // int getKey(const std::string &identifier) const;
+
     static const int ERRNO_FILE_EXISTS = 17;
     static const int ERRNO_FILE_NOT_FOUND = 2;
+    static const int FIGHT = 1;
+    static const int CREATOR = 2;
+    static const int EXIT = 3;
 };
 
 
