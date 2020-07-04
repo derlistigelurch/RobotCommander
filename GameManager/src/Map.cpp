@@ -6,7 +6,7 @@
 Map::Map(std::string path)
 {
     this->path = std::move(path);
-    this->getDimensions();
+    this->GetDimensions();
     this->CreateGrid();
     this->LoadGrid();
 }
@@ -16,10 +16,10 @@ Map::~Map()
     this->DeleteGrid();
 }
 
-void Map::getDimensions()
+void Map::GetDimensions()
 {
     std::string line;
-    std::ifstream map(this->path);
+    std::fstream map(this->path);
 
     if(!map.is_open())
     {
@@ -57,8 +57,8 @@ void Map::LoadGrid()
     }
 
     int y = 0;
-    // skip dimensions
     getline(map, line);
+
     while(getline(map, line))
     {
         for(auto &c : line)
@@ -71,6 +71,7 @@ void Map::LoadGrid()
         }
         y++;
     }
+
     map.close();
 }
 
@@ -79,7 +80,8 @@ void Map::DeleteGrid()
     for(auto &row : this->grid)
     {
         row.clear();
-    };
+    }
+
     this->grid.clear();
 }
 

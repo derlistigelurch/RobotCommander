@@ -11,7 +11,7 @@
 class MessageManager : public Sender
 {
 public:
-    MessageManager();
+    MessageManager() = default;
 
     ~MessageManager();
 

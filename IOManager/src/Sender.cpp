@@ -2,6 +2,7 @@
 
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <fstream>
@@ -133,4 +134,9 @@ std::string Sender::getPipe(const std::string &identifier) const
     {
         return ConfigManager().statsPipe;
     }
+}
+
+void Sender::Wait(int microseconds) const
+{
+    usleep(microseconds);
 }

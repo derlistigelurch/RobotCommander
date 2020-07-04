@@ -27,7 +27,7 @@ private:
     /**
      * Loads the Width and eight from a .map file
      */
-    void getDimensions();
+    void GetDimensions();
 
     int height;
     int width;

@@ -11,18 +11,22 @@
 int main()
 {
     auto *ioManager = new IOManager();
+
+    // ioManager->GameMode();
+
     std::string input;
     struct Message message{};
 
     ioManager->GetMessageQueue(IOManager::Sender::IO);
 
-    ioManager->SendMessage(6, "67", IOManager::Sender::IO);
+    ioManager->Wait(250000);
 
+    ioManager->SendMessage(6, "67", IOManager::Sender::IO);
 
     while(true)
     {
         message = ioManager->ReceiveMessage(IOManager::Sender::IO);
-        std::cout << message.text << std::endl << std::flush;
+        std::cout << message.text << std::flush;
 
         std::fill(message.text, message.text + sizeof(message.text), 0);
 
@@ -30,6 +34,11 @@ int main()
         getline(std::cin, input);
 
         ioManager->SendMessage(1, input, IOManager::Sender::IO);
+
+        if(input == "1")
+        {
+            ioManager->GameMode();
+        }
 
         if(input == "3")
         {

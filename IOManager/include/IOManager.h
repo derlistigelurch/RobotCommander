@@ -13,6 +13,8 @@ public:
     IOManager() = default;
 
     ~IOManager() = default;
+
+    void GameMode();
 };
 
 

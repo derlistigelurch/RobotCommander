@@ -9,11 +9,11 @@ int main()
     while(true)
     {
         std::string line;
-        std::ifstream pipe("../../GameManager/cmake-build-debug/mapPipe");
+        std::ifstream pipe("../../MessageManager/cmake-build-debug/mapPipe");
 
         if(!pipe.is_open())
         {
-            std::cerr << "ERROR: Unable to read from pipe";
+            std::cerr << "ERROR: Unable to read from pipe" << std::endl << std::flush;
             std::exit(EXIT_FAILURE);
         }
 

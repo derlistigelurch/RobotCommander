@@ -11,30 +11,11 @@
 
 #include "Map.h"
 #include "ScreenManager.h"
+#include "../../IOManager/include/Sender.h"
 
-class GameManager
+class GameManager : public Sender
 {
 private:
-    /**
-     * Creates a new pipe in the directory which is stated in the RobotCommander.config
-     */
-    void CreatePipe();
-
-    /**
-     * Deletes the pipe
-     */
-    void DeletePipe();
-
-    /**
-     * Loads the content of the RobotCommander.config
-     */
-    void LoadConfig();
-
-    /**
-     * Write the content of the map to the pipe
-     */
-    void WriteToPipe();
-
     /**
      * Convert a string to lowercase
      * @param string - Fight string
@@ -47,10 +28,11 @@ private:
      */
     void Initialize();
 
+    void ShowConfiguration() const;
+
     int playerCount;
     int enemyCount;
     std::string path;
-    std::string mapPipe;
     Map *map;
 
     static const int MOVE = 1;
@@ -63,9 +45,11 @@ public:
     ~GameManager();
 
     /**
-     * Parses the input and sends it to the correct receiver
+     *
      */
     void Fight();
+
+    std::string DrawMap() const;
 };
 
 

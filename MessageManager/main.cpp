@@ -11,14 +11,19 @@ int main()
     auto *messageManager = new MessageManager();
     messageManager->CreateMsgQueue(MessageManager::IO);
     Message message{};
-    std::string content;
+    std::string errorMessage;
+
+    std::cout << ScreenManager::ShowMainScreen() << std::endl
+              << ScreenManager::ShowMainMenu() << std::endl << std::flush;
+
+    system(("gnome-terminal -- " + ConfigManager().ioPath).c_str());
 
     while(true)
     {
         std::fill(message.text, message.text + sizeof(message.text), 0);
 
         message = messageManager->ReceiveMessage(MessageManager::IO);
-        content = "";
+        errorMessage = "";
 
         try
         {
@@ -30,8 +35,8 @@ int main()
 
                     // Create Pipes
                     messageManager->CreatePipe(MessageManager::Sender::MAP);
-                    messageManager->CreatePipe(MessageManager::Sender::LOG);
-                    messageManager->CreatePipe(MessageManager::Sender::STATS);
+                    // messageManager->CreatePipe(MessageManager::Sender::LOG);
+                    // messageManager->CreatePipe(MessageManager::Sender::STATS);
 
                     // automatically waits for process to finish
                     system(ConfigManager().gameManagerPath.c_str());
@@ -44,6 +49,7 @@ int main()
                     break;
 
                 case 2:
+                    // Open Workshop
                     break;
 
                 case 3:
@@ -56,9 +62,9 @@ int main()
         }
         catch(const std::exception &e)
         {
-            content = "ERROR: Unrecognised symbol\n";
+            errorMessage = "ERROR: Unrecognised symbol\n";
         }
 
-        messageManager->SendMessage(1, ScreenManager::ShowMainScreen() + content, MessageManager::Sender::IO);
+        messageManager->SendMessage(1, errorMessage, MessageManager::Sender::IO);
     }
 }

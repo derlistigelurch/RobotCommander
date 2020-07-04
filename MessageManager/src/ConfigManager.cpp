@@ -77,6 +77,34 @@ void ConfigManager::LoadConfig()
             this->gameManagerPath = ConfigManager::RemoveNewLine(line);
             continue;
         }
+
+        if(line == ConfigManager::IO_PATH_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->ioPath = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
+
+        if(line == ConfigManager::LOG_PATH_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->logPath = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
+
+        if(line == ConfigManager::MAP_PATH_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->mapPath = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
+
+        if(line == ConfigManager::STATS_PATH_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->statsPath = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
     }
 
     configFile.close();

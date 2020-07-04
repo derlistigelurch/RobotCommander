@@ -68,7 +68,17 @@ public:
      */
     virtual Message ReceiveMessage(const std::string& identifier) const;
 
+    /**
+     *
+     * @param identifier
+     */
     virtual void GetMessageQueue(const std::string& identifier);
+
+    /**
+     *
+     * @param microseconds
+     */
+    void Wait(int microseconds) const;
 
     int ioMessageId;
     int gameMessageId;

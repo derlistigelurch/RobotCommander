@@ -11,11 +11,6 @@
 #include "../include/Message.h"
 #include "../include/ConfigManager.h"
 
-MessageManager::MessageManager()
-{
-    ConfigManager().LoadConfig();
-}
-
 MessageManager::~MessageManager()
 {
     this->DeletePipe(Sender::LOG);

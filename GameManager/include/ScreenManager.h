@@ -11,11 +11,13 @@ public:
 
     ~ScreenManager() = default;
 
-    static void FightMenu() ;
+    static std::string ShowFightMenu() ;
 
-    void Exit();
+    static std::string ShowFightScreen();
 
     static std::string ShowMainScreen() ;
+
+    static std::string ShowMainMenu();
 };
 
 
