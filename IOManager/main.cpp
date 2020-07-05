@@ -12,7 +12,7 @@ int main()
 {
     auto *ioManager = new IOManager();
 
-    // ioManager->GameMode();
+    //ioManager->GameMode();
 
     std::string input;
     struct Message message{};
@@ -38,6 +38,11 @@ int main()
         if(input == "1")
         {
             ioManager->GameMode();
+        }
+
+        if(input == "2")
+        {
+            // ioManager->WorkshopMode();
         }
 
         if(input == "3")

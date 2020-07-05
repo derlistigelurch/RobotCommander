@@ -1,6 +1,6 @@
 #include "../include/GameManager.h"
+#include "../../MessageManager/include/ConfigManager.h"
 
-#include <unistd.h>
 
 GameManager::GameManager()
 {
@@ -20,22 +20,38 @@ void GameManager::Fight()
 {
     while(true)
     {
-        int input = 0;
-        std::cin >> input;
-        switch(input)
+        // send message + content
+
+        this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+
+        std::string content = this->ReceiveMessage(GameManager::Sender::GAME).text;
+
+        // process input
+        if(content == GameManager::ATTACK)
         {
-            case MOVE:
-                std::cout << "move" << std::endl;
-                break;
-            case ATTACK:
-                std::cout << "attack" << std::endl;
-                break;
-            case RETREAT:
-                std::cout << "retreat" << std::endl;
-                return;
-            default:
-                std::cout << "move" << std::endl;
-                break;
+            // check if enemy is in range
+            // roll damage
+            // reduce enemy health, if enemy is dead delete him
+            // log output
+        }
+
+        if(content == GameManager::MOVE)
+        {
+            // check if move action is possible
+            // set robot position to new position
+            // log output
+        }
+
+        if(content == GameManager::HELP)
+        {
+            // TODO: add manual
+            std::cout << "HELP" << std::endl << std::flush;
+        }
+
+        if(content == GameManager::RETREAT)
+        {
+            // log output
+            return;
         }
     }
 }
@@ -56,8 +72,6 @@ void GameManager::Initialize()
     this->GetMessageQueue(GameManager::Sender::GAME);
 
     ScreenManager::ShowFightScreen();
-    this->ShowConfiguration();
-    usleep(100);
 
     while(true)
     {
@@ -74,58 +88,14 @@ void GameManager::Initialize()
         errorMessage = "ERROR: Invalid path\n\n";
     }
 
-    ScreenManager::ShowFightScreen();
-    this->ShowConfiguration();
-
-    while(true)
-    {
-        this->SendMessage(1, errorMessage + "Enter the number of player robots\n", GameManager::Sender::GAME);
-        try
-        {
-            this->playerCount = std::stoi(this->ReceiveMessage(GameManager::Sender::GAME).text, nullptr, 10);
-        }
-        catch(const std::exception &e)
-        {
-            errorMessage = "ERROR: Invalid symbol\n\n";
-            continue;
-        }
-
-        if(this->playerCount > 0 && this->playerCount < 10)
-        {
-            errorMessage = "";
-            break;
-        }
-
-        errorMessage = "ERROR: Invalid number of players\n\n";
-    }
+    this->enemyCount = this->map->enemyCount;
+    this->playerCount = this->map->playerCount;
 
     ScreenManager::ShowFightScreen();
     this->ShowConfiguration();
 
-    while(true)
-    {
-        this->SendMessage(1, errorMessage + "Enter the number of enemy robots\n", GameManager::Sender::GAME);
-        try
-        {
-            this->enemyCount = std::stoi(this->ReceiveMessage(GameManager::Sender::GAME).text, nullptr, 10);
-        }
-        catch(const std::exception &e)
-        {
-            errorMessage = "ERROR: Invalid symbol\n\n";
-            errorMessage = "";
-            continue;
-        }
-
-        if(this->enemyCount > 0 && this->enemyCount < 10)
-        {
-            break;
-        }
-
-        errorMessage = "ERROR: Invalid number of enemies\n\n";
-    }
-
-    ScreenManager::ShowFightScreen();
-    this->ShowConfiguration();
+    this->LoadRobots(PLAYER);
+    this->LoadRobots(ENEMY);
 }
 
 void GameManager::ShowConfiguration() const
@@ -149,4 +119,141 @@ void GameManager::ShowConfiguration() const
 std::string GameManager::DrawMap() const
 {
     return this->map->Draw();
+}
+
+void GameManager::DeleteRobots()
+{
+    for(auto &robot : this->players)
+    {
+        delete robot;
+    }
+
+    this->players.clear();
+
+    for(auto &robot : this->enemies)
+    {
+        delete robot;
+    }
+
+    this->enemies.clear();
+}
+
+void GameManager::LoadRobots(const std::string &identifier)
+{
+    std::string robotsPath;
+
+    if(identifier == PLAYER)
+    {
+        robotsPath = ConfigManager().playerRobotsPath;
+    }
+
+    if(identifier == ENEMY)
+    {
+        robotsPath = ConfigManager().enemyRobotsPath;
+    }
+
+    std::fstream robots(robotsPath);
+
+    if(!robots.is_open())
+    {
+        std::cerr << "ERROR: Unable to open .save file" << std::endl << std::flush;
+        std::exit(EXIT_FAILURE);
+    }
+
+    int id;
+    int health;
+    int damage;
+    int movementSpeed;
+    int attackRadius;
+
+    char symbol;
+
+    std::string name;
+    std::string description;
+
+
+    std::string line;
+
+    while(getline(robots, line))
+    {
+        int pos = 0;
+        line = ConfigManager::RemoveNewLine(line);
+
+        if(line == "ROBOT" || line.empty())
+        {
+            continue;
+        }
+
+        std::string attribute = line.substr(0, (pos = line.find(DELIMITER)));
+        line = line.substr((pos + 1), line.length());
+
+        if(attribute == ID)
+        {
+            id = stoi(line, nullptr, 10);
+            continue;
+        }
+
+        if(attribute == SYMBOL)
+        {
+            symbol = line[0];
+            continue;
+        }
+
+        if(attribute == NAME)
+        {
+            name = line;
+            continue;
+        }
+
+        if(attribute == HEALTH)
+        {
+            health = stoi(line, nullptr, 10);
+            continue;
+        }
+
+        if(attribute == MOVEMENT_SPEED)
+        {
+            movementSpeed = stoi(line, nullptr, 10);
+            continue;
+        }
+
+        if(attribute == DAMAGE)
+        {
+            damage = stoi(line, nullptr, 10);
+            continue;
+        }
+
+        if(attribute == ATTACK_RADIUS)
+        {
+            attackRadius = stoi(line, nullptr, 10);
+            continue;
+        }
+
+        if(attribute == DESCRIPTION)
+        {
+            while(getline(robots, line))
+            {
+                line = ConfigManager::RemoveNewLine(line);
+                if(line == "-")
+                {
+                    break;
+                }
+                description += line;
+            }
+        }
+
+        if(identifier == PLAYER)
+        {
+            this->players.push_back(
+                    new Player(id, symbol, name, health, movementSpeed, damage, attackRadius, description)
+            );
+        }
+
+        if(identifier == ENEMY)
+        {
+            this->enemies.push_back(
+                    new Player(id, symbol, name, health, movementSpeed, damage, attackRadius, description)
+            );
+        }
+    }
 }

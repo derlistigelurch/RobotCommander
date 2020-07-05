@@ -9,7 +9,8 @@ enum class TileTypes : char
     MOUNTAIN = 'M',
     GRASS = 'G',
     BUILDING = 'B',
-    FOREST = 'F'
+    FOREST = 'F',
+    SPAWN = 'S'
 };
 
 #endif //MAP_TILETYPES_H

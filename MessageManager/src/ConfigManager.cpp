@@ -105,6 +105,20 @@ void ConfigManager::LoadConfig()
             this->statsPath = ConfigManager::RemoveNewLine(line);
             continue;
         }
+
+        if(line == ConfigManager::PLAYER_ROBOTS_PATH_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->playerRobotsPath = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
+
+        if(line == ConfigManager::ENEMY_ROBOTS_PATH_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->enemyRobotsPath = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
     }
 
     configFile.close();

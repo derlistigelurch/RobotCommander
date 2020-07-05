@@ -1,0 +1,34 @@
+ROBOT
+ID:1
+SYMBOL:P
+NAME:Gil Garth
+HEALTH:10
+MOVEMENT_SPEED:1
+DAMAGE:4
+ATTACK_RADIUS:2
+DESCRIPTION:
+This steel-armored terror machine ruthlessly strikes down enemies with its giant Anti-Armor-Rifle.
+-
+ROBOT
+ID:2
+SYMBOL:P
+NAME:Steel Ogre
+HEALTH:16
+MOVEMENT_SPEED:1
+DAMAGE:1
+ATTACK_RADIUS:1
+DESCRIPTION:
+A steel idol worshipped in the Land of Mashines.
+-
+ROBOT
+ID:3
+SYMBOL:P
+NAME:Dark Machine-Wizard
+HEALTH:12
+MOVEMENT_SPEED:2
+DAMAGE:4
+ATTACK_RADIUS:1
+DESCRIPTION:
+The ultimate robot in terms of attack and defense.
+-
+

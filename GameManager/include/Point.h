@@ -1,6 +1,7 @@
 #ifndef GAMEMANAGER_POINT_H
 #define GAMEMANAGER_POINT_H
 
+#include <string>
 
 class Point
 {
@@ -16,6 +17,8 @@ public:
     Point operator+(const int &number) const;
 
     Point operator-(const int &number) const;
+
+    std::string ToString() const;
 
     int x;
     int y;

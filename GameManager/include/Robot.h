@@ -10,11 +10,14 @@
 class Robot
 {
 public:
-    Robot(int id, std::string name, char symbol, Point *position);
+    Robot() = default;
+
+    Robot(int id, char symbol, const std::string &name, int health, int movementSpeed, int damage,
+          int attackRadius, const std::string &description);
 
     virtual ~Robot() = default;
 
-    void Attack(Robot &robot) const;
+    virtual void Attack(Robot &robot) const;
 
     void Move(Directions direction) const;
 

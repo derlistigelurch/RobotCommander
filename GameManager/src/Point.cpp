@@ -25,3 +25,8 @@ Point Point::operator-(const int &number) const
 {
     return Point(this->x - number, this->y - number);
 }
+
+std::string Point::ToString() const
+{
+    return "(" + std::to_string(this->x) + "|" + std::to_string(this->y) + ")";
+}

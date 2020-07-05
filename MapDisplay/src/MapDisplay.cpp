@@ -3,13 +3,14 @@
 
 #include "../include/TileTypes.h"
 #include "../include/Colors.h"
+#include "../../MessageManager/include/ConfigManager.h"
 
 int main()
 {
     while(true)
     {
         std::string line;
-        std::ifstream pipe("../../MessageManager/cmake-build-debug/mapPipe");
+        std::ifstream pipe(ConfigManager().mapPipe);
 
         if(!pipe.is_open())
         {
@@ -49,6 +50,10 @@ int main()
 
                     case (char) TileTypes::FOREST:
                         std::cout << ESCAPE << BG_GREEN << SEPARATOR << FG_BLACK << END_ESCAPE << c << RESET;
+                        break;
+
+                    case (char) TileTypes::SPAWN:
+                        std::cout << ESCAPE << BG_BLACK << SEPARATOR << FG_LIGHT_RED << END_ESCAPE << c << RESET;
                         break;
 
                     default:

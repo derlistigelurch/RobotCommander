@@ -27,29 +27,38 @@ private:
     /**
      * Loads the Width and eight from a .map file
      */
-    void GetDimensions();
+    void SetDimensions();
+
+    /**
+     * Sets private playerCount and enemyCount variables
+     */
+    void SetNumberOfRobots();
 
     int height;
     int width;
-    std::string path;
-    std::vector<std::vector<char>> grid;
 
+    std::string path;
+
+    std::vector<std::vector<char>> grid;
     static const char DELIMITER = 'x';
 
 public:
+
     /**
      * Creates a new map with a given path to a .map file
      * @param path absolute or relative path to a valid .map file
      */
     explicit Map(std::string path);
-
     ~Map();
 
     /**
-     * Transforms the 2D grid into a 1D string
+     * Transforms the 2D grid into a string
      * @return returns a string with all map tiles (e.g. "MMMMMGGGGGF")
      */
     std::string Draw();
+
+    int playerCount;
+    int enemyCount;
 };
 
 

@@ -21,7 +21,7 @@ MessageManager::~MessageManager()
 
 void MessageManager::CreatePipe(const std::string &identifier)
 {
-    if(mkfifo(this->getPipe(identifier).c_str(), ConfigManager().mode) == -1 && errno != ERRNO_FILE_EXISTS)
+    if(mkfifo(this->getPipe(identifier).c_str(), ConfigManager().mode) == EOF && errno != ERRNO_FILE_EXISTS)
     {
         std::cerr << "ERROR: Unable to create pipe" << std::endl;
         std::exit(EXIT_FAILURE);

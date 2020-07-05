@@ -1,11 +1,13 @@
 #include "../include/Player.h"
 
-#include <utility>
-
-Player::Player(int id, std::string name, char symbol, Point *position) : Robot(id, std::move(name), symbol, position)
+Player::Player(int id, char symbol, const std::string &name, int health, int movementSpeed, int damage,
+               int attackRadius, const std::string &description)
+        : Robot(id, symbol, name, health, movementSpeed, damage, attackRadius, description)
 {
-    this->id = id;
-    this->name = name;
-    this->symbol = symbol;
-    this->position = position;
+
+}
+
+Player::~Player()
+{
+    delete this->position;
 }

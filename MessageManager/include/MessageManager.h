@@ -10,6 +10,13 @@
 
 class MessageManager : public Sender
 {
+private:
+    static const int ERRNO_FILE_EXISTS = 17;
+    static const int ERRNO_FILE_NOT_FOUND = 2;
+    static const int FIGHT = 1;
+    static const int CREATOR = 2;
+    static const int EXIT = 3;
+
 public:
     MessageManager() = default;
 
@@ -38,13 +45,6 @@ public:
      * @param identifier - string identifier to delete the correct messagequeue
      */
     void DeleteMsgQueue(const std::string &identifier) const;
-
-private:
-    static const int ERRNO_FILE_EXISTS = 17;
-    static const int ERRNO_FILE_NOT_FOUND = 2;
-    static const int FIGHT = 1;
-    static const int CREATOR = 2;
-    static const int EXIT = 3;
 };
 
 

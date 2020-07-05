@@ -1,13 +1,16 @@
 #include "../include/Robot.h"
 
-#include <utility>
-
-Robot::Robot(int id, std::string name, char symbol, Point *position)
+Robot::Robot(int id, char symbol, const std::string &name, int health, int movementSpeed, int damage, int attackRadius,
+             const std::string &description)
 {
     this->id = id;
-    this->name = std::move(name);
     this->symbol = symbol;
-    this->position = position;
+    this->name = name;
+    this->health = health;
+    this->movementSpeed = movementSpeed;
+    this->damage = damage;
+    this->attackRadius = attackRadius;
+    this->description = description;
 }
 
 void Robot::Attack(Robot &robot) const

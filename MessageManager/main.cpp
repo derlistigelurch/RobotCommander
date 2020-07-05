@@ -13,8 +13,8 @@ int main()
     Message message{};
     std::string errorMessage;
 
-    std::cout << ScreenManager::ShowMainScreen() << std::endl
-              << ScreenManager::ShowMainMenu() << std::endl << std::flush;
+    ScreenManager::ShowMainScreen();
+    ScreenManager::ShowMainMenu();
 
     system(("gnome-terminal -- " + ConfigManager().ioPath).c_str());
 
@@ -44,7 +44,6 @@ int main()
                     // delete gameMessageQueue
                     messageManager->DeleteMsgQueue(MessageManager::Sender::GAME);
                     messageManager->DeletePipe(MessageManager::Sender::MAP);
-                    messageManager->DeletePipe(MessageManager::Sender::LOG);
                     messageManager->DeletePipe(MessageManager::Sender::LOG);
                     break;
 
