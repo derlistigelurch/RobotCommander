@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include "Point.h"
 
 class Map
 {
@@ -34,12 +35,15 @@ private:
      */
     void SetNumberOfRobots();
 
+    void SetSpawnPoints();
+
     int height;
     int width;
 
     std::string path;
 
     std::vector<std::vector<char>> grid;
+
     static const char DELIMITER = 'x';
 
 public:
@@ -49,16 +53,16 @@ public:
      * @param path absolute or relative path to a valid .map file
      */
     explicit Map(std::string path);
+
     ~Map();
 
-    /**
-     * Transforms the 2D grid into a string
-     * @return returns a string with all map tiles (e.g. "MMMMMGGGGGF")
-     */
-    std::string Draw();
+    std::vector<std::vector<char>> GetGrid();
 
     int playerCount;
     int enemyCount;
+
+    std::vector<Point> playerSpawnPoints;
+    std::vector<Point> enemySpawnPoints;
 };
 
 

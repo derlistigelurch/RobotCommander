@@ -60,19 +60,19 @@ public:
      * @param text
      * @param identifier
      */
-    virtual void SendMessage(long type, const std::string &text, const std::string& identifier) const;
+    virtual void SendMessage(long type, const std::string &text, const std::string &identifier) const;
 
     /**
      * Receives a message from the messagequeue (waits for message)
      * @return returns a new message struct from the messagequeue
      */
-    virtual Message ReceiveMessage(const std::string& identifier) const;
+    virtual Message ReceiveMessage(const std::string &identifier) const;
 
     /**
      *
      * @param identifier
      */
-    virtual void GetMessageQueue(const std::string& identifier);
+    virtual void GetMessageQueue(const std::string &identifier);
 
     /**
      *

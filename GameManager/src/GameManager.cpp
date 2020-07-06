@@ -13,19 +13,21 @@ GameManager::GameManager()
 
 GameManager::~GameManager()
 {
+    this->DeleteRobots();
     delete this->map;
 }
 
 void GameManager::Fight()
 {
     this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
-    this->SendMessage(1, "", GameManager::Sender::GAME);
+    //this->SendMessage(1, "dere", GameManager::Sender::GAME);
 
     while(true)
     {
         std::string content = this->ReceiveMessage(GameManager::Sender::GAME).text;
 
         // process input
+        // Get current player
         if(content == ATTACK)
         {
             // check if enemy is in range
@@ -36,23 +38,30 @@ void GameManager::Fight()
 
         if(content == MOVE)
         {
+            // get active player
             // check if move action is possible
             // set robot position to new position
             // log output
+            std::string oldPos = players[0]->position.ToString();
+            this->players[0]->Move(Directions::EAST);
+            this->WriteToPipe("M:P1:" + oldPos + ":" + this->players[0]->position.ToString(), GameManager::Sender::LOG);
         }
 
         if(content == HELP)
         {
             // TODO: add manual
-            std::cout << "HELP" << std::endl << std::flush;
+            this->PrintManual();
             this->SendMessage(1, "", GameManager::Sender::GAME);
             continue;
         }
 
         if(content == RETREAT)
         {
-            this->WriteToPipe("R", GameManager::Sender::LOG);
-            //break;
+            // this->WriteToPipe("R", GameManager::Sender::LOG);
+            this->CloseDisplay(GameManager::Sender::LOG);
+            this->CloseDisplay(GameManager::Sender::MAP);
+            this->CloseDisplay(GameManager::Sender::STATS);
+            return;
         }
 
         this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
@@ -82,7 +91,7 @@ void GameManager::Initialize()
     while(true)
     {
         this->SendMessage(1, errorMessage + "Enter a valid path to your map\n", GameManager::Sender::GAME);
-        this->Wait(1000000);
+        // this->Wait(1000000);
         std::fstream file(this->path = this->ReceiveMessage(GameManager::Sender::GAME).text);
 
         if(file.is_open())
@@ -103,6 +112,8 @@ void GameManager::Initialize()
 
     this->LoadRobots(PLAYER);
     this->LoadRobots(ENEMY);
+
+    this->SendMessage(1, "", GameManager::Sender::GAME);
 }
 
 void GameManager::ShowConfiguration() const
@@ -123,9 +134,21 @@ void GameManager::ShowConfiguration() const
     std::cout << std::endl;
 }
 
-std::string GameManager::DrawMap() const
+// SIGSEGV
+std::string GameManager::DrawMap()
 {
-    return this->map->Draw();
+    std::vector<std::vector<char>> grid = this->map->GetGrid();
+    for(auto &p : this->players)
+    {
+        grid[p->position.y][p->position.x] = p->symbol;
+    }
+
+    for(auto &e : this->enemies)
+    {
+        grid[e->position.y][e->position.x] = e->symbol;
+    }
+
+    return this->ToString(grid);
 }
 
 void GameManager::DeleteRobots()
@@ -173,12 +196,14 @@ void GameManager::LoadRobots(const std::string &identifier)
     int damage;
     int movementSpeed;
     int attackRadius;
+    int counter = 0;
 
     char symbol;
 
     std::string name;
     std::string description;
     std::string line;
+
 
     while(getline(robots, line))
     {
@@ -244,22 +269,49 @@ void GameManager::LoadRobots(const std::string &identifier)
                 {
                     break;
                 }
+
                 description += line;
             }
         }
 
         if(identifier == PLAYER)
         {
-            this->players.push_back(
-                    new Player(id, symbol, name, health, movementSpeed, damage, attackRadius, description)
-            );
+
+            this->players.push_back(new Player(id, symbol, name, health, movementSpeed, damage, attackRadius,
+                                               description, this->map->playerSpawnPoints[counter]));
         }
 
         if(identifier == ENEMY)
         {
-            this->enemies.push_back(
-                    new Player(id, symbol, name, health, movementSpeed, damage, attackRadius, description)
-            );
+            this->enemies.push_back(new Enemy(id, symbol, name, health, movementSpeed, damage, attackRadius,
+                                              description, this->map->enemySpawnPoints[counter]));
         }
+
+        counter++;
     }
+}
+
+void GameManager::CloseDisplay(const std::string &display) const
+{
+    this->WriteToPipe(SHUTDOWN, display);
+}
+
+std::string GameManager::ToString(const std::vector<std::vector<char>> &grid)
+{
+    std::string gridString;
+    for(auto &row : grid)
+    {
+        for(auto &c : row)
+        {
+            gridString += c;
+        }
+        gridString += "\n";
+    }
+
+    return gridString;
+}
+
+void GameManager::PrintManual() const
+{
+    std::cout << "HELP" << std::endl << std::flush;
 }

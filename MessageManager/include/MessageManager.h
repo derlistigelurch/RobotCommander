@@ -18,7 +18,7 @@ private:
     static const int EXIT = 3;
 
 public:
-    MessageManager() = default;
+    MessageManager();
 
     ~MessageManager();
 

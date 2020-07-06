@@ -31,6 +31,10 @@ int main()
             {
                 switch(c)
                 {
+                    case (char) TileTypes::SPAWN:
+                        std::cout << ESCAPE << BG_LIGHT_GREEN << SEPARATOR << FG_BLACK << END_ESCAPE << 'G' << RESET;
+                        break;
+
                     case (char) TileTypes::PLAYER:
                         std::cout << ESCAPE << BG_BLACK << SEPARATOR << FG_LIGHT_GREY << END_ESCAPE << c << RESET;
                         break;
@@ -57,10 +61,6 @@ int main()
 
                     case (char) TileTypes::FOREST:
                         std::cout << ESCAPE << BG_GREEN << SEPARATOR << FG_BLACK << END_ESCAPE << c << RESET;
-                        break;
-
-                    case (char) TileTypes::SPAWN:
-                        std::cout << ESCAPE << BG_BLACK << SEPARATOR << FG_LIGHT_RED << END_ESCAPE << c << RESET;
                         break;
 
                     default:

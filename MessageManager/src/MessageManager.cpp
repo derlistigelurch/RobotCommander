@@ -17,6 +17,7 @@ MessageManager::~MessageManager()
     this->DeletePipe(Sender::MAP);
     this->DeletePipe(Sender::STATS);
     this->DeleteMsgQueue(Sender::IO);
+    this->DeleteMsgQueue(MessageManager::Sender::GAME);
 }
 
 void MessageManager::CreatePipe(const std::string &identifier)
@@ -55,4 +56,13 @@ void MessageManager::DeleteMsgQueue(const std::string &identifier) const
         fprintf(stderr, "Message queue could not be deleted.\n");
         exit(EXIT_FAILURE);
     }
+}
+
+MessageManager::MessageManager()
+{
+    this->CreateMsgQueue(MessageManager::IO);
+    this->CreateMsgQueue(MessageManager::Sender::GAME);
+    this->CreatePipe(MessageManager::Sender::MAP);
+    this->CreatePipe(MessageManager::Sender::LOG);
+    this->CreatePipe(MessageManager::Sender::STATS);
 }

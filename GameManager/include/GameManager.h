@@ -40,6 +40,24 @@ private:
      */
     void DeleteRobots();
 
+    /**
+     * Sends shutdown message to a given display
+     * @param display - Identifier of the display pipe
+     */
+    void CloseDisplay(const std::string &display) const;
+
+    /**
+     * Transforms a 2D grid into a 1D string
+     * @param grid - 2D grid which contains the characters of the map
+     * @return returns a string with all map tiles (e.g. "MMMMMGGGGGF")
+     */
+    std::string ToString(const std::vector<std::vector<char>>& grid);
+
+    /**
+     * Prints the manual of the game
+     */
+    void PrintManual() const;
+
     int playerCount;
     int enemyCount;
 
@@ -66,6 +84,7 @@ private:
     inline static const std::string ATTACK = "2";
     inline static const std::string HELP = "3";
     inline static const std::string RETREAT = "4";
+    inline static const std::string SHUTDOWN = "shutdown";
 
 public:
     GameManager();
@@ -73,7 +92,7 @@ public:
     ~GameManager();
 
     /**
-     *
+     * Starts the Fight
      */
     void Fight();
 
@@ -81,7 +100,7 @@ public:
      * Calls the draw function of the map
      * @return returns the current map as a string
      */
-    std::string DrawMap() const;
+    std::string DrawMap();
 
     /**
      * Loads all robots from the .save file

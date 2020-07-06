@@ -6,14 +6,17 @@
 
 int main(int argc, char *argv[])
 {
-    system(("gnome-terminal -- " + ConfigManager().mapPath).c_str());
-    system(("gnome-terminal -- " + ConfigManager().logPath).c_str());
-    // system(("gnome-terminal -- " + ConfigManager().statsPath).c_str());
+    auto configManager = new ConfigManager();
+
+    system(("gnome-terminal -- " + configManager->mapPath).c_str());
+    system(("gnome-terminal -- " + configManager->logPath).c_str());
+    system(("gnome-terminal -- " + configManager->statsPath).c_str());
 
     auto *gameManager = new GameManager();
 
     gameManager->Fight();
 
+    delete configManager;
     delete gameManager;
 
     return EXIT_SUCCESS;

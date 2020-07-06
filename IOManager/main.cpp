@@ -18,10 +18,9 @@ int main()
     struct Message message{};
 
     ioManager->GetMessageQueue(IOManager::Sender::IO);
-    ioManager->Wait(500000);
 
     ioManager->SendMessage(6, "89", IOManager::Sender::IO);
-
+    // ioManager->Wait(250000);
     while(true)
     {
         message = ioManager->ReceiveMessage(IOManager::Sender::IO);
@@ -36,6 +35,7 @@ int main()
 
         if(input == "1")
         {
+            ioManager->Wait(500000);
             ioManager->GameMode();
         }
 

@@ -10,10 +10,13 @@ Map::Map(std::string path)
     this->SetNumberOfRobots();
     this->CreateGrid();
     this->LoadGrid();
+    this->SetSpawnPoints();
 }
 
 Map::~Map()
 {
+    this->playerSpawnPoints.clear();
+    this->enemySpawnPoints.clear();
     this->DeleteGrid();
 }
 
@@ -69,8 +72,10 @@ void Map::LoadGrid()
             {
                 continue;
             }
+
             this->grid[y].push_back(c);
         }
+
         y++;
     }
 
@@ -85,21 +90,6 @@ void Map::DeleteGrid()
     }
 
     this->grid.clear();
-}
-
-std::string Map::Draw()
-{
-    std::string map;
-    for(auto &row : this->grid)
-    {
-        for(auto &c : row)
-        {
-            map += c;
-        }
-        map += "\n";
-    }
-
-    return map;
 }
 
 void Map::SetNumberOfRobots()
@@ -128,4 +118,26 @@ void Map::SetNumberOfRobots()
     }
 
     map.close();
+}
+
+std::vector<std::vector<char>> Map::GetGrid()
+{
+    return this->grid;
+}
+
+void Map::SetSpawnPoints()
+{
+
+    for(int i = 1; i < this->height - 1; i++)
+    {
+        if(this->grid[i][1] == 'S')
+        {
+            this->playerSpawnPoints.emplace_back(1, i);
+        }
+
+        if(this->grid[i][this->width - 2] == 'S')
+        {
+            this->enemySpawnPoints.emplace_back(this->width - 2, i);
+        }
+    }
 }
