@@ -23,7 +23,7 @@ void IOManager::GameMode()
 
         this->SendMessage(1, input, IOManager::Sender::GAME);
 
-        if(input == "3")
+        if(input == "5")
         {
             break;
         }

@@ -18,16 +18,15 @@ GameManager::~GameManager()
 
 void GameManager::Fight()
 {
+    this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+    this->SendMessage(1, "", GameManager::Sender::GAME);
+
     while(true)
     {
-        // send message + content
-
-        this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
-
         std::string content = this->ReceiveMessage(GameManager::Sender::GAME).text;
 
         // process input
-        if(content == GameManager::ATTACK)
+        if(content == ATTACK)
         {
             // check if enemy is in range
             // roll damage
@@ -35,24 +34,31 @@ void GameManager::Fight()
             // log output
         }
 
-        if(content == GameManager::MOVE)
+        if(content == MOVE)
         {
             // check if move action is possible
             // set robot position to new position
             // log output
         }
 
-        if(content == GameManager::HELP)
+        if(content == HELP)
         {
             // TODO: add manual
             std::cout << "HELP" << std::endl << std::flush;
+            this->SendMessage(1, "", GameManager::Sender::GAME);
+            continue;
         }
 
-        if(content == GameManager::RETREAT)
+        if(content == RETREAT)
         {
-            // log output
-            return;
+            this->WriteToPipe("R", GameManager::Sender::LOG);
+            //break;
         }
+
+        this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+
+        // send message + content
+        this->SendMessage(1, content, GameManager::Sender::GAME);
     }
 }
 
@@ -76,6 +82,7 @@ void GameManager::Initialize()
     while(true)
     {
         this->SendMessage(1, errorMessage + "Enter a valid path to your map\n", GameManager::Sender::GAME);
+        this->Wait(1000000);
         std::fstream file(this->path = this->ReceiveMessage(GameManager::Sender::GAME).text);
 
         if(file.is_open())
@@ -138,6 +145,7 @@ void GameManager::DeleteRobots()
     this->enemies.clear();
 }
 
+// TODO: refactor
 void GameManager::LoadRobots(const std::string &identifier)
 {
     std::string robotsPath;
@@ -170,8 +178,6 @@ void GameManager::LoadRobots(const std::string &identifier)
 
     std::string name;
     std::string description;
-
-
     std::string line;
 
     while(getline(robots, line))

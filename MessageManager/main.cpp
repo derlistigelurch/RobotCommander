@@ -35,7 +35,7 @@ int main()
 
                     // Create Pipes
                     messageManager->CreatePipe(MessageManager::Sender::MAP);
-                    // messageManager->CreatePipe(MessageManager::Sender::LOG);
+                    messageManager->CreatePipe(MessageManager::Sender::LOG);
                     // messageManager->CreatePipe(MessageManager::Sender::STATS);
 
                     // automatically waits for process to finish

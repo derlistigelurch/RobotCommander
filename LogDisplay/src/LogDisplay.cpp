@@ -7,7 +7,18 @@
 #define MOVE 'M'
 #define ATTACK 'A'
 #define RETREAT 'R'
+#define DESTROY 'D'
+#define WIN 'W'
+#define LOSE 'L'
 #define DELIMITER ':'
+
+std::string GetValue(std::string &line)
+{
+    int pos = line.find(DELIMITER);
+    std::string value = line.substr(0, pos);
+    line.erase(0, pos + 1);
+    return value;
+}
 
 int main()
 {
@@ -25,9 +36,13 @@ int main()
 
         while(getline(pipe, line))
         {
-            std::string token;
-
             line = ConfigManager::RemoveNewLine(line);
+
+            if(line == "shutdown")
+            {
+                pipe.close();
+                return EXIT_SUCCESS;
+            }
 
             char action = line.substr(0, pos = line.find(DELIMITER))[0];
             line.erase(0, pos + 1);
@@ -35,53 +50,42 @@ int main()
             switch(action)
             {
                 case MOVE:
-                {
-                    // M:P:OLD_POS:NEW_POS
-                    pos = line.find(DELIMITER);
-                    std::string robot = line.substr(0, pos);
-                    line.erase(0, pos + 1);
-
-                    pos = line.find(DELIMITER);
-                    std::string oldPos = line.substr(0, pos);
-                    line.erase(0, pos + 1);
-
-                    pos = line.find(DELIMITER);
-                    std::string newPos = line.substr(0, pos);
-                    line.erase(0, pos + 1);
-
+                    // M:R:OLD_POS:NEW_POS
                     std::cout << ESCAPE << BG_BLUE << SEPARATOR << FG_BLACK << END_ESCAPE << "MOVE:" << RESET << " "
-                              << robot << " moved from " << oldPos << " to " << newPos << "." << std::endl
-                              << std::flush;
+                              << GetValue(line) << " moved from " << GetValue(line) << " to " << GetValue(line) << "."
+                              << std::endl << std::flush;
                     break;
-                }
 
                 case ATTACK:
-                {
-                    // A:P:DMG:E
-                    pos = line.find(DELIMITER);
-                    std::string player = line.substr(0, pos);
-                    line.erase(0, pos + 1);
-
-                    pos = line.find(DELIMITER);
-                    std::string damage = line.substr(0, pos);
-                    line.erase(0, pos + 1);
-
-                    pos = line.find(DELIMITER);
-                    std::string enemy = line.substr(0, pos);
-                    line.erase(0, pos + 1);
-
-                    std::cout << BG_GREEN << SEPARATOR << FG_BLACK << END_ESCAPE << "ATTACK:" << RESET << " " << player
-                              << " attacked " << enemy << " and dealt " << damage << " damage." << std::endl
-                              << std::flush;
+                    // A:R:R:DMG
+                    std::cout << ESCAPE << BG_GREEN << SEPARATOR << FG_BLACK << END_ESCAPE << "ATTACK:" << RESET << " "
+                              << GetValue(line) << " attacked " << GetValue(line) << " and dealt " << GetValue(line)
+                              << " damage." << std::endl << std::flush;
                     break;
-                }
+
+                case DESTROY:
+                    // D:R
+                    std::cout << ESCAPE << BG_RED << SEPARATOR << FG_BLACK << END_ESCAPE << "DESTROY:" << RESET << " "
+                              << GetValue(line) << "has been destroyed." << std::endl << std::flush;
+                    break;
 
                 case RETREAT:
-                {
                     // R:
-                    std::cout << "RETREAT" << ": " << "Player retreated from the fight." << std::endl;
+                    std::cout << ESCAPE << BG_MAGENTA << SEPARATOR << FG_BLACK << END_ESCAPE << "RETREAT:" << RESET
+                              << " Player retreated from the fight." << std::endl;
                     break;
-                }
+
+                case WIN:
+                    // W:
+                    std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << "WIN:" << RESET
+                              << " Player won battle." << std::endl;
+                    break;
+
+                case LOSE:
+                    // L:
+                    std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << "LOSE:" << RESET
+                              << " Player lost battle." << std::endl;
+                    break;
 
                 default:
                     break;
@@ -89,7 +93,8 @@ int main()
         }
 
         pipe.close();
-        return EXIT_SUCCESS;
     }
+
+    return EXIT_SUCCESS;
 }
 

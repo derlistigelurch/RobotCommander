@@ -20,6 +20,13 @@ int main()
 
         while(getline(pipe, line))
         {
+            line = ConfigManager::RemoveNewLine(line);
+            if(line == "shutdown")
+            {
+                pipe.close();
+                return EXIT_SUCCESS;
+            }
+
             for(char &c : line)
             {
                 switch(c)
@@ -61,8 +68,10 @@ int main()
                         exit(EXIT_FAILURE);
                 }
             }
+
             std::cout << std::endl << std::flush;
         }
+
         pipe.close();
     }
 

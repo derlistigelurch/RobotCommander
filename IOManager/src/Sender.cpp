@@ -125,7 +125,7 @@ std::string Sender::getPipe(const std::string &identifier) const
         return ConfigManager().mapPipe;
     }
 
-    if(identifier == FIGHTLOG)
+    if(identifier == LOG)
     {
         return ConfigManager().logPipe;
     }

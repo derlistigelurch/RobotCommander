@@ -12,16 +12,15 @@ int main()
 {
     auto *ioManager = new IOManager();
 
-    //ioManager->GameMode();
+    // ioManager->GameMode();
 
     std::string input;
     struct Message message{};
 
     ioManager->GetMessageQueue(IOManager::Sender::IO);
+    ioManager->Wait(500000);
 
-    ioManager->Wait(250000);
-
-    ioManager->SendMessage(6, "67", IOManager::Sender::IO);
+    ioManager->SendMessage(6, "89", IOManager::Sender::IO);
 
     while(true)
     {
