@@ -19,10 +19,13 @@ public:
 
     void Move(Directions direction);
 
+    std::string ToString() const;
+
     int id;
     int attackRadius;
     int health;
     int actionPoints;
+    int currentActionPoints;
     int damage;
 
     char symbol;

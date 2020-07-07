@@ -127,7 +127,6 @@ std::vector<std::vector<char>> Map::GetGrid()
 
 void Map::SetSpawnPoints()
 {
-
     for(int i = 1; i < this->height - 1; i++)
     {
         if(this->grid[i][1] == 'S')

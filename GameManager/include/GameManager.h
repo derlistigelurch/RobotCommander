@@ -19,11 +19,18 @@ class GameManager : public Sender
 {
 private:
     /**
-     * Convert a string to lowercase
+     * Converts a string to lowercase
      * @param string - input
      * @return returns the converted string
      */
     std::string ToLower(std::string string);
+
+    /**
+     * Converts a string to uppercase
+     * @param string - input
+     * @return returns the converted string
+     */
+    std::string ToUpper(std::string string);
 
     /**
      * Initializes private variables
@@ -58,6 +65,19 @@ private:
      */
     void PrintManual() const;
 
+    /**
+     * Splits a given string into its parts and returns the value on every call
+     * @param line
+     * @return Returns the first occurrence of string
+     */
+    std::string GetValue(std::string &line);
+
+    Robot *GetActiveRobot(const std::string &line);
+
+    void ResetActionPoints();
+
+    int CanMove(Robot robot, Directions direction);
+
     int playerCount;
     int enemyCount;
 
@@ -67,6 +87,10 @@ private:
 
     std::vector<Robot *> players;
     std::vector<Robot *> enemies;
+
+    static const int MOVEMENT_COST = 1;
+    static const int NOT_ENOUGH_AP = 2;
+    static const int MOVE_BLOCKED = 3;
 
     static const char DELIMITER = ':';
 
@@ -83,8 +107,10 @@ private:
     inline static const std::string MOVE = "M";
     inline static const std::string ATTACK = "A";
     inline static const std::string HELP = "H";
+    inline static const std::string SHOW = "S";
     inline static const std::string RETREAT = "R";
     inline static const std::string SHUTDOWN = "shutdown";
+    inline static const std::string END_ROUND = "E";
 
 public:
     GameManager();

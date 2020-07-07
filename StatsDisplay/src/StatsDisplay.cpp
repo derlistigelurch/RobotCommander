@@ -4,7 +4,7 @@
 #include "../../MapDisplay/include/Colors.h"
 #include "../../MessageManager/include/ConfigManager.h"
 
-#define PLAYER 'P'
+#define ENEMY 'E'
 #define DELIMITER ':'
 
 std::string GetValue(std::string &line)
@@ -31,7 +31,7 @@ int main()
 
         while(getline(pipe, line))
         {
-            // P|E:ID:SYMBOL:NAME:HEALTH:MOVEMENT_SPEED:DAMAGE:ATTACK_RADIUS:DESCRIPTION
+            // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
             line = ConfigManager::RemoveNewLine(line);
 
             if(line == "shutdown")
@@ -41,12 +41,12 @@ int main()
             }
 
             char color = line.substr(0, pos = line.find(DELIMITER))[0];
-            std::string bgColor = BG_RED;
+            std::string bgColor = BG_BLUE;
             line.erase(0, pos + 1);
 
-            if(color == PLAYER)
+            if(color == ENEMY)
             {
-                bgColor = BG_BLUE;
+                bgColor = BG_RED;
             }
 
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "ID:" << RESET << " "
@@ -57,8 +57,8 @@ int main()
                       << GetValue(line) << std::flush << std::endl;
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "HEALTH:" << RESET << " "
                       << GetValue(line) << std::flush << std::endl;
-            std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "SPEED:" << RESET << " "
-                      << GetValue(line) << std::flush << std::endl;
+            std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "ACTION_POINTS:" << RESET << " "
+                      << GetValue(line) << "/" << GetValue(line) << std::flush << std::endl;
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "DAMAGE:" << RESET << " "
                       << GetValue(line) << std::flush << std::endl;
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "ATTACK_RADIUS:" << RESET << " "

@@ -24,11 +24,11 @@ void GameManager::Run()
 
     while(true)
     {
-        std::string content = this->ReceiveMessage(GameManager::Sender::GAME).text;
+        std::string content = this->ToUpper(this->ReceiveMessage(GameManager::Sender::GAME).text);
+        std::string action = GetValue(content);
 
         // process input
-        // Get current player
-        if(content == ATTACK)
+        if(action == ATTACK)
         {
             // check if enemy is in range
             // roll damage
@@ -36,18 +36,86 @@ void GameManager::Run()
             // log output
         }
 
-        if(content == MOVE)
+        // M:P1:E
+        if(action == MOVE)
         {
-            // get active player
+            // Get current robot symbol and id
+            std::string robotString = this->GetValue(content);
+
+            // get active robot
+            Robot *robot = this->GetActiveRobot(robotString);
+
+            if(robot == nullptr)
+            {
+                this->SendMessage(1, "INFO: Robot not found!", GameManager::Sender::GAME);
+                continue;
+            }
+
+            std::string oldPos = robot->position.ToString();
+            Directions direction = (Directions) GetValue(content)[0];
+
             // check if move action is possible
-            // set robot position to new position
-            // log output
-            std::string oldPos = players[0]->position.ToString();
-            this->players[0]->Move(Directions::EAST);
-            this->WriteToPipe("M:P1:" + oldPos + ":" + this->players[0]->position.ToString(), GameManager::Sender::LOG);
+            int movementCost = MOVEMENT_COST;
+            switch((movementCost = this->CanMove(*robot, direction)))
+            {
+                case MOVE_BLOCKED:
+                    this->SendMessage(1, "INFO: Cannot move there, move is blocked!", GameManager::Sender::GAME);
+                    robot = nullptr;
+                    continue;
+
+                case NOT_ENOUGH_AP:
+                    this->SendMessage(1, "INFO: Not enough AP!", GameManager::Sender::GAME);
+                    robot = nullptr;
+                    continue;
+
+                default:
+                    // set robot position to new position
+                    robot->Move(direction);
+                    robot->currentActionPoints -= movementCost;
+                    std::string newPos = robot->position.ToString();
+
+                    // log output
+                    this->WriteToPipe("M:" + robotString
+                                              .append(":")
+                                              .append(oldPos)
+                                              .append(":")
+                                              .append(newPos),
+                                      GameManager::Sender::LOG);
+                    break;
+            }
         }
 
-        if(content == HELP)
+        // S:P1
+        if(action == SHOW)
+        {
+            // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
+            Robot *robot = robot = this->GetActiveRobot(this->GetValue(content));
+            if(robot == nullptr)
+            {
+                this->SendMessage(1, "INFO: Robot not found!", GameManager::Sender::GAME);
+                continue;
+            }
+            else
+            {
+                std::string data;
+                data.append(1, robot->symbol).append(":")
+                        .append(std::to_string(robot->id)).append(":")
+                        .append(1, robot->symbol).append(":")
+                        .append(robot->name).append(":")
+                        .append(std::to_string(robot->health)).append(":")
+                        .append(std::to_string(robot->currentActionPoints)).append(":")
+                        .append(std::to_string(robot->actionPoints)).append(":")
+                        .append(std::to_string(robot->damage)).append(":")
+                        .append(std::to_string(robot->attackRadius)).append(":")
+                        .append(robot->description);
+
+                this->WriteToPipe(data, GameManager::Sender::STATS);
+            }
+
+            robot = nullptr;
+        }
+
+        if(action == HELP)
         {
             // TODO: add manual
             this->PrintManual();
@@ -55,7 +123,7 @@ void GameManager::Run()
             continue;
         }
 
-        if(content == RETREAT)
+        if(action == RETREAT)
         {
             // this->WriteToPipe("R", GameManager::Sender::LOG);
             this->CloseDisplay(GameManager::Sender::LOG);
@@ -64,10 +132,19 @@ void GameManager::Run()
             return;
         }
 
+        if(action == END_ROUND)
+        {
+            // this->WriteToPipe("E", GameManager::Sender::LOG);
+            // reset action points
+            this->ResetActionPoints();
+            // roundCounter + 1
+            // start enemy round
+        }
+
         this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
 
         // send message + content
-        this->SendMessage(1, content, GameManager::Sender::GAME);
+        this->SendMessage(1, "", GameManager::Sender::GAME);
     }
 }
 
@@ -76,6 +153,16 @@ std::string GameManager::ToLower(std::string string)
     for(auto &c : string)
     {
         c = std::tolower(c);
+    }
+
+    return string;
+}
+
+std::string GameManager::ToUpper(std::string string)
+{
+    for(auto &c : string)
+    {
+        c = std::toupper(c);
     }
 
     return string;
@@ -261,6 +348,7 @@ void GameManager::LoadRobots(const std::string &identifier)
 
         if(attribute == DESCRIPTION)
         {
+            description = "";
             while(getline(robots, line))
             {
                 line = ConfigManager::RemoveNewLine(line);
@@ -275,7 +363,6 @@ void GameManager::LoadRobots(const std::string &identifier)
 
         if(identifier == PLAYER)
         {
-
             this->players.push_back(new Player(id, symbol, name, health, actionPoints, damage, attackRadius,
                                                description, this->map->playerSpawnPoints[counter]));
         }
@@ -313,4 +400,78 @@ std::string GameManager::ToString(const std::vector<std::vector<char>> &grid)
 void GameManager::PrintManual() const
 {
     std::cout << "HELP" << std::endl << std::flush;
+}
+
+std::string GameManager::GetValue(std::string &line)
+{
+    int pos = line.find(DELIMITER);
+    std::string value = line.substr(0, pos);
+    line.erase(0, pos + 1);
+
+    return value;
+}
+
+void GameManager::ResetActionPoints()
+{
+    for(auto &p : this->players)
+    {
+        p->currentActionPoints = p->actionPoints;
+    }
+
+    for(auto &e : this->enemies)
+    {
+        e->currentActionPoints = e->actionPoints;
+    }
+}
+
+int GameManager::CanMove(Robot robot, Directions direction)
+{
+    robot.Move(direction);
+    char tile = this->map->GetGrid()[robot.position.x][robot.position.y];
+    if(tile == 'M')
+    {
+        return MOVE_BLOCKED;
+    }
+
+    int movementCost = MOVEMENT_COST;
+    if(tile == 'W')
+    {
+        movementCost++;
+    }
+
+    if((robot.currentActionPoints - movementCost) < 0)
+    {
+        return NOT_ENOUGH_AP;
+    }
+
+    return movementCost;
+}
+
+Robot *GameManager::GetActiveRobot(const std::string &line)
+{
+    char symbol = line[0];
+    int id = stoi(line.substr(1, line.length()), nullptr, 10);
+
+    if(symbol == PLAYER[0])
+    {
+        for(auto &p : this->players)
+        {
+            if(p->id == id && p->symbol == symbol)
+            {
+                return p;
+            }
+        }
+    }
+    else
+    {
+        for(auto &e : this->enemies)
+        {
+            if(e->id == id && e->symbol == symbol)
+            {
+                return e;
+            }
+        }
+    }
+
+    return nullptr;
 }

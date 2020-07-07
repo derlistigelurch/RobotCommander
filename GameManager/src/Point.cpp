@@ -28,5 +28,8 @@ Point Point::operator-(const int &number) const
 
 std::string Point::ToString() const
 {
-    return "(" + std::to_string(this->x) + "|" + std::to_string(this->y) + ")";
+    return "(" + std::to_string(this->x)
+            .append("|")
+            .append(std::to_string(this->y))
+            .append(")");
 }
