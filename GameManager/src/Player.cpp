@@ -1,8 +1,8 @@
 #include "../include/Player.h"
 
-Player::Player(int id, char symbol, const std::string &name, int health, int movementSpeed, int damage,
+Player::Player(int id, char symbol, const std::string &name, int health, int actionPoints, int damage,
                int attackRadius, const std::string &description, Point position)
-        : Robot(id, symbol, name, health, movementSpeed, damage, attackRadius, description, position)
+        : Robot(id, symbol, name, health, actionPoints, damage, attackRadius, description, position)
 {
 
 }

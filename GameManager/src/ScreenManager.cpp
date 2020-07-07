@@ -17,9 +17,9 @@ void ScreenManager::ShowMainScreen()
 
 void ScreenManager::ShowMainMenu()
 {
-    std::cout << "1 - Fight\n"
-                 "2 - Workshop\n"
-                 "3 - Exit\n"
+    std::cout << "F - Fight\n"
+                 "W - Workshop\n"
+                 "E - Exit\n"
               << std::endl << std::flush;
 }
 
@@ -36,8 +36,8 @@ void ScreenManager::ShowFightScreen()
 
 void ScreenManager::ShowFightMenu()
 {
-    std::cout << "1 - Move\n"
-                 "2 - Attack\n"
-                 "3 - Retreat\n"
+    std::cout << "M - Move\n"
+                 "A - Attack\n"
+                 "R - Retreat\n"
               << std::endl << std::flush;
 }

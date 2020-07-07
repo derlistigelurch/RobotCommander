@@ -11,6 +11,7 @@
 int main()
 {
     auto *ioManager = new IOManager();
+    ioManager->Wait(250000);
 
     // ioManager->GameMode();
 
@@ -19,8 +20,7 @@ int main()
 
     ioManager->GetMessageQueue(IOManager::Sender::IO);
 
-    ioManager->SendMessage(6, "89", IOManager::Sender::IO);
-    // ioManager->Wait(250000);
+    ioManager->SendMessage(6, "R", IOManager::Sender::IO);
     while(true)
     {
         message = ioManager->ReceiveMessage(IOManager::Sender::IO);
@@ -33,18 +33,17 @@ int main()
 
         ioManager->SendMessage(1, input, IOManager::Sender::IO);
 
-        if(input == "1")
+        if(input == "F")
         {
-            ioManager->Wait(500000);
             ioManager->GameMode();
         }
 
-        if(input == "2")
+        if(input == "W")
         {
             // ioManager->WorkshopMode();
         }
 
-        if(input == "3")
+        if(input == "E")
         {
             break;
         }

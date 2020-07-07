@@ -16,7 +16,7 @@ void Sender::SendMessage(long type, const std::string &text, const std::string &
     message.type = type;
     std::strncpy(message.text, text.c_str(), text.length());
 
-    if(msgsnd(this->getId(identifier), &message, sizeof(message) - sizeof(long), IPC_NOWAIT) == EOF)
+    if(msgsnd(this->GetId(identifier), &message, sizeof(message) - sizeof(long), IPC_NOWAIT) == EOF)
     {
         std::cerr << "ERROR: Can't send message" << std::endl;
         std::exit(EXIT_FAILURE);
@@ -27,7 +27,7 @@ Message Sender::ReceiveMessage(const std::string &identifier) const
 {
     struct Message message{};
 
-    if(msgrcv(this->getId(identifier), &message, sizeof(message) - sizeof(long), 0, 0) == EOF)
+    if(msgrcv(this->GetId(identifier), &message, sizeof(message) - sizeof(long), 0, 0) == EOF)
     {
         std::cerr << "ERROR: Can't receive from message queue" << std::endl;
         std::exit(EXIT_FAILURE);
@@ -36,7 +36,7 @@ Message Sender::ReceiveMessage(const std::string &identifier) const
     return message;
 }
 
-int Sender::getKey(const std::string &identifier) const
+int Sender::GetKey(const std::string &identifier) const
 {
     if(identifier == IO)
     {
@@ -49,7 +49,7 @@ int Sender::getKey(const std::string &identifier) const
     }
 }
 
-void Sender::setId(int id, const std::string &identifier)
+void Sender::SetId(int id, const std::string &identifier)
 {
     if(identifier == IO)
     {
@@ -62,7 +62,7 @@ void Sender::setId(int id, const std::string &identifier)
     }
 }
 
-int Sender::getId(const std::string &identifier) const
+int Sender::GetId(const std::string &identifier) const
 {
     if(identifier == IO)
     {
@@ -77,8 +77,8 @@ int Sender::getId(const std::string &identifier) const
 
 void Sender::GetMessageQueue(const std::string &identifier)
 {
-    this->setId(msgget(getKey(identifier), ConfigManager().mode), identifier);
-    if(this->getId(identifier) == EOF)
+    this->SetId(msgget(GetKey(identifier), ConfigManager().mode), identifier);
+    if(this->GetId(identifier) == EOF)
     {
         std::cerr << "Can't access message queue" << std::endl;
         std::exit(EXIT_FAILURE);
@@ -87,7 +87,7 @@ void Sender::GetMessageQueue(const std::string &identifier)
 
 void Sender::WriteToPipe(const std::string &content, const std::string &identifier) const
 {
-    std::fstream pipe(this->getPipe(identifier));
+    std::fstream pipe(this->GetPipe(identifier));
 
     if(!pipe.is_open())
     {
@@ -101,7 +101,7 @@ void Sender::WriteToPipe(const std::string &content, const std::string &identifi
 
 void Sender::ReadFromPipe(const std::string &identifier) const
 {
-    std::fstream pipe(this->getPipe(identifier));
+    std::fstream pipe(this->GetPipe(identifier));
     if(!pipe.is_open())
     {
         std::cerr << "ERROR: Unable to read from pipe";
@@ -118,7 +118,7 @@ void Sender::ReadFromPipe(const std::string &identifier) const
     pipe.close();
 }
 
-std::string Sender::getPipe(const std::string &identifier) const
+std::string Sender::GetPipe(const std::string &identifier) const
 {
     if(identifier == MAP)
     {

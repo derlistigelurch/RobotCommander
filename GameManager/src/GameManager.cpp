@@ -17,7 +17,7 @@ GameManager::~GameManager()
     delete this->map;
 }
 
-void GameManager::Fight()
+void GameManager::Run()
 {
     this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
     //this->SendMessage(1, "dere", GameManager::Sender::GAME);
@@ -83,6 +83,7 @@ std::string GameManager::ToLower(std::string string)
 
 void GameManager::Initialize()
 {
+    Sender::Wait(25000);
     std::string errorMessage;
     this->GetMessageQueue(GameManager::Sender::GAME);
 
@@ -91,7 +92,6 @@ void GameManager::Initialize()
     while(true)
     {
         this->SendMessage(1, errorMessage + "Enter a valid path to your map\n", GameManager::Sender::GAME);
-        // this->Wait(1000000);
         std::fstream file(this->path = this->ReceiveMessage(GameManager::Sender::GAME).text);
 
         if(file.is_open())
@@ -134,7 +134,6 @@ void GameManager::ShowConfiguration() const
     std::cout << std::endl;
 }
 
-// SIGSEGV
 std::string GameManager::DrawMap()
 {
     std::vector<std::vector<char>> grid = this->map->GetGrid();
@@ -194,7 +193,7 @@ void GameManager::LoadRobots(const std::string &identifier)
     int id;
     int health;
     int damage;
-    int movementSpeed;
+    int actionPoints;
     int attackRadius;
     int counter = 0;
 
@@ -242,9 +241,9 @@ void GameManager::LoadRobots(const std::string &identifier)
             continue;
         }
 
-        if(attribute == MOVEMENT_SPEED)
+        if(attribute == ACTION_POINTS)
         {
-            movementSpeed = stoi(line, nullptr, 10);
+            actionPoints = stoi(line, nullptr, 10);
             continue;
         }
 
@@ -277,13 +276,13 @@ void GameManager::LoadRobots(const std::string &identifier)
         if(identifier == PLAYER)
         {
 
-            this->players.push_back(new Player(id, symbol, name, health, movementSpeed, damage, attackRadius,
+            this->players.push_back(new Player(id, symbol, name, health, actionPoints, damage, attackRadius,
                                                description, this->map->playerSpawnPoints[counter]));
         }
 
         if(identifier == ENEMY)
         {
-            this->enemies.push_back(new Enemy(id, symbol, name, health, movementSpeed, damage, attackRadius,
+            this->enemies.push_back(new Enemy(id, symbol, name, health, actionPoints, damage, attackRadius,
                                               description, this->map->enemySpawnPoints[counter]));
         }
 

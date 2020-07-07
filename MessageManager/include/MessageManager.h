@@ -13,9 +13,11 @@ class MessageManager : public Sender
 private:
     static const int ERRNO_FILE_EXISTS = 17;
     static const int ERRNO_FILE_NOT_FOUND = 2;
-    static const int FIGHT = 1;
-    static const int CREATOR = 2;
-    static const int EXIT = 3;
+
+    static const char REGISTRATION = 'R';
+    static const char FIGHT = 'F';
+    static const char WORKSHOP = 'W';
+    static const char EXIT = 'E';
 
 public:
     MessageManager();
@@ -24,27 +26,32 @@ public:
 
     /**
      * Creates a new pipe in the directory which is stated in the RobotCommander.config, does nothing if file exists
-     * @param identifier - string identifier to create the correct pipe
+     * @param identifier
      */
     void CreatePipe(const std::string &identifier);
 
     /**
      * Deletes the pipe, nothing happens if file not exists
-     * @param identifier - string identifier to delete the correct pipe
+     * @param identifier
      */
     void DeletePipe(const std::string &identifier);
 
     /**
      * Creates a new messagequeue, saves id into ioMessageId
-     * @param identifier - string identifier to get the correct key
+     * @param identifier
      */
     void CreateMsgQueue(const std::string &identifier);
 
     /**
      * Deletes a messagequeue, exits on failure
-     * @param identifier - string identifier to delete the correct messagequeue
+     * @param identifier
      */
     void DeleteMsgQueue(const std::string &identifier) const;
+
+    /**
+     * starts the main loop of the message manager, where it receives and processes messages from the user
+     */
+    void Run();
 };
 
 

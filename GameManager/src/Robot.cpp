@@ -7,7 +7,7 @@ Robot::Robot(int id, char symbol, const std::string &name, int health, int movem
     this->symbol = symbol;
     this->name = name;
     this->health = health;
-    this->movementSpeed = movementSpeed;
+    this->actionPoints = movementSpeed;
     this->damage = damage;
     this->attackRadius = attackRadius;
     this->description = description;

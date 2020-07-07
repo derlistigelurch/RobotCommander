@@ -52,7 +52,7 @@ public:
      * Creates a new map with a given path to a .map file
      * @param path absolute or relative path to a valid .map file
      */
-    explicit Map(std::string path);
+    explicit Map(const std::string &path);
 
     ~Map();
 

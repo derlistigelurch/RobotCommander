@@ -75,15 +75,15 @@ private:
     inline static const std::string ID = "ID";
     inline static const std::string ATTACK_RADIUS = "ATTACK_RADIUS";
     inline static const std::string HEALTH = "HEALTH";
-    inline static const std::string MOVEMENT_SPEED = "MOVEMENT_SPEED";
+    inline static const std::string ACTION_POINTS = "ACTION_POINTS";
     inline static const std::string DAMAGE = "DAMAGE";
     inline static const std::string SYMBOL = "SYMBOL";
     inline static const std::string NAME = "NAME";
     inline static const std::string DESCRIPTION = "DESCRIPTION";
-    inline static const std::string MOVE = "1";
-    inline static const std::string ATTACK = "2";
-    inline static const std::string HELP = "3";
-    inline static const std::string RETREAT = "4";
+    inline static const std::string MOVE = "M";
+    inline static const std::string ATTACK = "A";
+    inline static const std::string HELP = "H";
+    inline static const std::string RETREAT = "R";
     inline static const std::string SHUTDOWN = "shutdown";
 
 public:
@@ -94,7 +94,7 @@ public:
     /**
      * Starts the Fight
      */
-    void Fight();
+    void Run();
 
     /**
      * Calls the draw function of the map

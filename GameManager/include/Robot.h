@@ -10,7 +10,7 @@
 class Robot
 {
 public:
-    Robot(int id, char symbol, const std::string &name, int health, int movementSpeed, int damage,
+    Robot(int id, char symbol, const std::string &name, int health, int actionPoints, int damage,
           int attackRadius, const std::string &description, Point position);
 
     virtual ~Robot() = default;
@@ -22,7 +22,7 @@ public:
     int id;
     int attackRadius;
     int health;
-    int movementSpeed;
+    int actionPoints;
     int damage;
 
     char symbol;

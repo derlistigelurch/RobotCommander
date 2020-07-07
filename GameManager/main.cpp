@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     auto *gameManager = new GameManager();
 
-    gameManager->Fight();
+    gameManager->Run();
 
     delete configManager;
     delete gameManager;

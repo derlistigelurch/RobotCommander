@@ -9,8 +9,6 @@ void IOManager::GameMode()
 
     this->GetMessageQueue(IOManager::Sender::GAME);
 
-    // std::cout << this->ReceiveMessage(IOManager::Sender::GAME).text << std::endl << std::flush;
-
     while(true)
     {
         message = this->ReceiveMessage(IOManager::Sender::GAME);
@@ -23,7 +21,7 @@ void IOManager::GameMode()
 
         this->SendMessage(1, input, IOManager::Sender::GAME);
 
-        if(input == "5")
+        if(input == "R")
         {
             break;
         }

@@ -9,32 +9,32 @@ class Sender
 {
 protected:
     /**
-     *
+     * Returns the messagequeue id based on a given identifier
      * @param identifier
      * @return
      */
-    int getId(const std::string &identifier) const;
+    int GetId(const std::string &identifier) const;
 
     /**
-     *
+     * Sets the messagequeue id based on a given identifier
      * @param id
      * @param identifier
      */
-    void setId(int id, const std::string &identifier);
+    void SetId(int id, const std::string &identifier);
 
     /**
-     *
+     * Returns the key of a messagequeue based on a given identifier
      * @param identifier
      * @return
      */
-    int getKey(const std::string &identifier) const;
+    int GetKey(const std::string &identifier) const;
 
     /**
-     *
+     * Returns the path to a pipe based on a given identifier
      * @param identifier
-     * @return
+     * @return Returns the path to a pipe
      */
-    std::string getPipe(const std::string &identifier) const;
+    std::string GetPipe(const std::string &identifier) const;
 
 public:
     Sender() = default;
@@ -69,13 +69,13 @@ public:
     virtual Message ReceiveMessage(const std::string &identifier) const;
 
     /**
-     *
+     * Get the id from a messagequeue based on a given identifier
      * @param identifier
      */
     virtual void GetMessageQueue(const std::string &identifier);
 
     /**
-     *
+     * Wait for n microseconds
      * @param microseconds
      */
     void Wait(int microseconds) const;

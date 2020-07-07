@@ -3,9 +3,9 @@
 #include <utility>
 #include <iostream>
 
-Map::Map(std::string path)
+Map::Map(const std::string &path)
 {
-    this->path = std::move(path);
+    this->path = path;
     this->SetDimensions();
     this->SetNumberOfRobots();
     this->CreateGrid();
