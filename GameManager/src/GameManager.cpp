@@ -20,7 +20,6 @@ GameManager::~GameManager()
 void GameManager::Run()
 {
     this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
-    //this->SendMessage(1, "dere", GameManager::Sender::GAME);
 
     while(true)
     {
@@ -39,43 +38,38 @@ void GameManager::Run()
 
             case MOVE: // M:P1:E
             {
-                // Get current robot symbol and id
                 std::string robotString = this->GetValue(content);
-                // get active robot
                 Robot *robot = this->GetActiveRobot(robotString);
                 if(robot == nullptr)
                 {
-                    content = "INFO: Robot not found!";
-                    //this->SendMessage(1, "I:Robot not found!", GameManager::Sender::GAME);
+                    this->WriteToPipe("I:Robot not found!", GameManager::Sender::LOG);
                     break;
                 }
 
-                std::string oldPos = robot->position.ToString();
-                // cast direction char to Directions enum
                 Directions direction = (Directions) GetValue(content)[0];
-                // check if move action is possible
+                if(direction != Directions::NORTH && direction != Directions::EAST && direction != Directions::SOUTH &&
+                   direction != Directions::WEST)
+                {
+                    this->WriteToPipe("I:Invalid direction!", GameManager::Sender::LOG);
+                    break;
+                }
+
                 int movementCost;
+                std::string oldPos = robot->position.ToString();
                 switch((movementCost = this->CanMove(*robot, direction)))
                 {
                     case ERR_MOVE_BLOCKED:
-                        // this->SendMessage(1, "I:Cannot move there, move is blocked!", GameManager::Sender::GAME);
-                        content = "INFO:Cannot move there, move is blocked!";
+                        this->WriteToPipe("I:Cannot move there, move is blocked!", GameManager::Sender::LOG);
                         break;
 
                     case ERR_NOT_ENOUGH_AP:
-                        // this->SendMessage(1, "I:Not enough AP!", GameManager::Sender::GAME);
-                        content = "INFO:Not enough AP";
+                        this->WriteToPipe("I:Not enough AP!", GameManager::Sender::LOG);
                         break;
 
                     default:
-                        // set robot position to new position
                         robot->Move(direction, movementCost);
-
-                        // log output
-                        this->WriteToPipe("M:" + robotString
-                                                  .append(":")
-                                                  .append(oldPos)
-                                                  .append(":")
+                        this->WriteToPipe("M:" + robotString.append(":")
+                                                  .append(oldPos).append(":")
                                                   .append(robot->position.ToString()),
                                           GameManager::Sender::LOG);
                         this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
@@ -87,15 +81,14 @@ void GameManager::Run()
 
             case SHOW: // S:P1
             {
-                // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
                 Robot *robot = robot = this->GetActiveRobot(this->GetValue(content));
                 if(robot == nullptr)
                 {
-                    content = "INFO: Robot not found!";
+                    this->WriteToPipe("I:Robot not found!", GameManager::Sender::LOG);
                     break;
-                    // this->SendMessage(1, "I:Robot not found!", GameManager::Sender::GAME);
                 }
 
+                // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
                 std::string data;
                 data.append(1, robot->symbol).append(":")
                         .append(std::to_string(robot->id)).append(":")
@@ -115,12 +108,10 @@ void GameManager::Run()
             case HELP:
                 // TODO: add manual
                 this->PrintManual();
-                content = "";
                 break;
 
             case RETREAT:
                 this->WriteToPipe("R", GameManager::Sender::LOG);
-                this->WriteToPipe("L", GameManager::Sender::LOG);
                 this->Wait(1000000);
                 this->CloseDisplay(GameManager::Sender::LOG);
                 this->CloseDisplay(GameManager::Sender::MAP);
@@ -136,12 +127,12 @@ void GameManager::Run()
                 break;
 
             default:
-                content = "INFO: Invalid command!";
+                this->WriteToPipe("I:Invalid command!", GameManager::Sender::LOG);
+                content = "";
                 break;
         }
 
-        // send message + content
-        this->SendMessage(1, content, GameManager::Sender::GAME);
+        this->SendMessage(1, "", GameManager::Sender::GAME);
     }
 }
 
@@ -446,8 +437,18 @@ int GameManager::CanMove(Robot robot, Directions direction)
 
 Robot *GameManager::GetActiveRobot(const std::string &line)
 {
-    char symbol = line[0];
-    int id = stoi(line.substr(1, line.length()), nullptr, 10);
+    char symbol;
+    int id;
+
+    try
+    {
+        symbol = line[0];
+        id = stoi(line.substr(1, line.length()), nullptr, 10);
+    }
+    catch(const std::exception &e)
+    {
+        return nullptr;
+    }
 
     if(symbol == PLAYER[0])
     {

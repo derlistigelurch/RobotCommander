@@ -31,6 +31,7 @@ int main()
 
         while(getline(pipe, line))
         {
+            std::cout << "\033[2J\033[1;1H";
             // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
             line = ConfigManager::RemoveNewLine(line);
 

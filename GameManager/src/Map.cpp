@@ -1,6 +1,5 @@
 #include "../include/Map.h"
 
-#include <utility>
 #include <iostream>
 
 Map::Map(const std::string &path)
@@ -129,12 +128,12 @@ void Map::SetSpawnPoints()
 {
     for(int i = 1; i < this->height - 1; i++)
     {
-        if(this->grid[i][1] == 'S')
+        if(this->grid[i][1] == SPAWN_POINT)
         {
             this->playerSpawnPoints.emplace_back(1, i);
         }
 
-        if(this->grid[i][this->width - 2] == 'S')
+        if(this->grid[i][this->width - 2] == SPAWN_POINT)
         {
             this->enemySpawnPoints.emplace_back(this->width - 2, i);
         }

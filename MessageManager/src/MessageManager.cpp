@@ -70,6 +70,9 @@ void MessageManager::Run()
     Message message{};
     std::string errorMessage;
 
+    ScreenManager::ShowMainScreen();
+    ScreenManager::ShowMainMenu();
+
     while(true)
     {
         std::fill(message.text, message.text + sizeof(message.text), 0);
@@ -97,9 +100,6 @@ void MessageManager::Run()
                 errorMessage = "ERROR: Unrecognised symbol.\n";
                 break;
         }
-
-        ScreenManager::ShowMainScreen();
-        ScreenManager::ShowMainMenu();
 
         this->SendMessage(1, errorMessage, MessageManager::Sender::IO);
     }

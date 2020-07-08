@@ -17,7 +17,7 @@ void ConfigManager::LoadConfig()
 
     if(!configFile.is_open())
     {
-        std::cerr << "ERROR: Unable to read from config file";
+        std::cerr << "ERROR: Unable to read from config file" <<std::endl << std::flush;
         std::exit(EXIT_FAILURE);
     }
 

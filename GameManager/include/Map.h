@@ -45,6 +45,7 @@ private:
     std::vector<std::vector<char>> grid;
 
     static const char DELIMITER = 'x';
+    static const char SPAWN_POINT = 'S';
 
 public:
 

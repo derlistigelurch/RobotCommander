@@ -97,7 +97,7 @@ int main()
 
                 case INFO:
                     // I:MESSAGE
-                    std::cout << ESCAPE << FG_LIGHT_BLUE << SEPARATOR << FG_BLACK << END_ESCAPE << "INFO: " << RESET
+                    std::cout << ESCAPE << FG_CYAN << SEPARATOR << FG_BLACK << END_ESCAPE << "INFO: " << RESET
                               << GetValue(line) << std::endl;
                     break;
 

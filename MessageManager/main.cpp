@@ -10,9 +10,6 @@ int main()
 {
     auto *messageManager = new MessageManager();
 
-    ScreenManager::ShowMainScreen();
-    ScreenManager::ShowMainMenu();
-
     system(("gnome-terminal -- " + ConfigManager().ioPath).c_str());
 
     messageManager->Run();
@@ -21,7 +18,6 @@ int main()
 }
 
 // TODO:
-//  Player movement
 //  Player attack
 //  Show Ascii image in the StatsDisplay
 //  Write error messages to log file

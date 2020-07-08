@@ -38,6 +38,7 @@ void ScreenManager::ShowFightMenu()
 {
     std::cout << "M - Move\n"
                  "A - Attack\n"
+                 "S - Show\n"
                  "R - Retreat\n"
               << std::endl << std::flush;
 }

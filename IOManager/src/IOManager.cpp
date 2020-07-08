@@ -11,6 +11,7 @@ void IOManager::GameMode()
 
     while(true)
     {
+        std::cout << "\033[2J\033[1;1H";
         message = this->ReceiveMessage(IOManager::Sender::GAME);
         std::cout << message.text << std::endl << std::flush;
 

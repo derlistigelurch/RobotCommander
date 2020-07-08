@@ -12,6 +12,8 @@ int main()
         std::string line;
         std::ifstream pipe(ConfigManager().mapPipe);
 
+        std::cout << "\033[2J\033[1;1H";
+
         if(!pipe.is_open())
         {
             std::cerr << "ERROR: Unable to read from pipe" << std::endl << std::flush;

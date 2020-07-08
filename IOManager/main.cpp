@@ -23,6 +23,7 @@ int main()
     ioManager->SendMessage(6, "R", IOManager::Sender::IO);
     while(true)
     {
+        std::cout << "\033[2J\033[1;1H";
         message = ioManager->ReceiveMessage(IOManager::Sender::IO);
         std::cout << message.text << std::flush;
 

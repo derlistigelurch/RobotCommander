@@ -107,8 +107,8 @@ private:
     static const char RETREAT = 'R';
     static const char END_TURN = 'E';
 
-    inline static const std::string PLAYER = "PLAYER";
-    inline static const std::string ENEMY = "ENEMY";
+    inline static const std::string PLAYER = "P";
+    inline static const std::string ENEMY = "E";
     inline static const std::string ID = "ID";
     inline static const std::string ATTACK_RADIUS = "ATTACK_RADIUS";
     inline static const std::string HEALTH = "HEALTH";
