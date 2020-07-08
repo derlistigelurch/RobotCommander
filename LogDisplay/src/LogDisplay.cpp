@@ -10,6 +10,8 @@
 #define DESTROY 'D'
 #define WIN 'W'
 #define LOSE 'L'
+#define END_TURN 'E'
+#define INFO 'I'
 #define DELIMITER ':'
 
 std::string GetValue(std::string &line)
@@ -75,6 +77,12 @@ int main()
                               << " Player retreated from the fight." << std::endl;
                     break;
 
+                case END_TURN:
+                    // E:
+                    std::cout << ESCAPE << BG_LIGHT_RED << SEPARATOR << FG_BLACK << END_ESCAPE << "END TURN:" << RESET
+                              << " AP have been restored" << std::endl;
+                    break;
+
                 case WIN:
                     // W:
                     std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << "WIN:" << RESET
@@ -85,6 +93,12 @@ int main()
                     // L:
                     std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << "LOSE:" << RESET
                               << " Player lost battle." << std::endl;
+                    break;
+
+                case INFO:
+                    // I:MESSAGE
+                    std::cout << ESCAPE << FG_LIGHT_BLUE << SEPARATOR << FG_BLACK << END_ESCAPE << "INFO: " << RESET
+                              << GetValue(line) << std::endl;
                     break;
 
                 default:

@@ -58,7 +58,7 @@ private:
      * @param grid - 2D grid which contains the characters of the map
      * @return returns a string with all map tiles (e.g. "MMMMMGGGGGF")
      */
-    std::string ToString(const std::vector<std::vector<char>>& grid);
+    std::string ToString(const std::vector<std::vector<char>> &grid);
 
     /**
      * Prints the manual of the game
@@ -76,6 +76,13 @@ private:
 
     void ResetActionPoints();
 
+    /**
+     * Checks if a robot can move in a given direction
+     * @param robot
+     * @param direction
+     * @return returns the movement costs or ERR_NOT_ENOUGH_AP(29) if robot has not enough AP or ERR_MOVE_BLOCKED(32)
+     * if movement is blocked
+     */
     int CanMove(Robot robot, Directions direction);
 
     int playerCount;
@@ -89,10 +96,16 @@ private:
     std::vector<Robot *> enemies;
 
     static const int MOVEMENT_COST = 1;
-    static const int NOT_ENOUGH_AP = 2;
-    static const int MOVE_BLOCKED = 3;
+    static const int ERR_NOT_ENOUGH_AP = 29;
+    static const int ERR_MOVE_BLOCKED = 32;
 
     static const char DELIMITER = ':';
+    static const char MOVE = 'M';
+    static const char ATTACK = 'A';
+    static const char HELP = 'H';
+    static const char SHOW = 'S';
+    static const char RETREAT = 'R';
+    static const char END_TURN = 'E';
 
     inline static const std::string PLAYER = "PLAYER";
     inline static const std::string ENEMY = "ENEMY";
@@ -104,13 +117,7 @@ private:
     inline static const std::string SYMBOL = "SYMBOL";
     inline static const std::string NAME = "NAME";
     inline static const std::string DESCRIPTION = "DESCRIPTION";
-    inline static const std::string MOVE = "M";
-    inline static const std::string ATTACK = "A";
-    inline static const std::string HELP = "H";
-    inline static const std::string SHOW = "S";
-    inline static const std::string RETREAT = "R";
     inline static const std::string SHUTDOWN = "shutdown";
-    inline static const std::string END_ROUND = "E";
 
 public:
     GameManager();

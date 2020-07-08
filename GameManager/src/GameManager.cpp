@@ -25,78 +25,77 @@ void GameManager::Run()
     while(true)
     {
         std::string content = this->ToUpper(this->ReceiveMessage(GameManager::Sender::GAME).text);
-        std::string action = GetValue(content);
+        char action = GetValue(content)[0];
 
         // process input
-        if(action == ATTACK)
+        switch(action)
         {
-            // check if enemy is in range
-            // roll damage
-            // reduce enemy health, if enemy is dead delete him
-            // log output
-        }
+            case ATTACK:
+                // check if enemy is in range
+                // roll damage
+                // reduce enemy health, if enemy is dead delete him
+                // log output
+                break;
 
-        // M:P1:E
-        if(action == MOVE)
-        {
-            // Get current robot symbol and id
-            std::string robotString = this->GetValue(content);
-
-            // get active robot
-            Robot *robot = this->GetActiveRobot(robotString);
-
-            if(robot == nullptr)
+            case MOVE: // M:P1:E
             {
-                this->SendMessage(1, "INFO: Robot not found!", GameManager::Sender::GAME);
-                continue;
-            }
-
-            std::string oldPos = robot->position.ToString();
-            Directions direction = (Directions) GetValue(content)[0];
-
-            // check if move action is possible
-            int movementCost = MOVEMENT_COST;
-            switch((movementCost = this->CanMove(*robot, direction)))
-            {
-                case MOVE_BLOCKED:
-                    this->SendMessage(1, "INFO: Cannot move there, move is blocked!", GameManager::Sender::GAME);
-                    robot = nullptr;
-                    continue;
-
-                case NOT_ENOUGH_AP:
-                    this->SendMessage(1, "INFO: Not enough AP!", GameManager::Sender::GAME);
-                    robot = nullptr;
-                    continue;
-
-                default:
-                    // set robot position to new position
-                    robot->Move(direction);
-                    robot->currentActionPoints -= movementCost;
-                    std::string newPos = robot->position.ToString();
-
-                    // log output
-                    this->WriteToPipe("M:" + robotString
-                                              .append(":")
-                                              .append(oldPos)
-                                              .append(":")
-                                              .append(newPos),
-                                      GameManager::Sender::LOG);
+                // Get current robot symbol and id
+                std::string robotString = this->GetValue(content);
+                // get active robot
+                Robot *robot = this->GetActiveRobot(robotString);
+                if(robot == nullptr)
+                {
+                    content = "INFO: Robot not found!";
+                    //this->SendMessage(1, "I:Robot not found!", GameManager::Sender::GAME);
                     break;
-            }
-        }
+                }
 
-        // S:P1
-        if(action == SHOW)
-        {
-            // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
-            Robot *robot = robot = this->GetActiveRobot(this->GetValue(content));
-            if(robot == nullptr)
-            {
-                this->SendMessage(1, "INFO: Robot not found!", GameManager::Sender::GAME);
-                continue;
+                std::string oldPos = robot->position.ToString();
+                // cast direction char to Directions enum
+                Directions direction = (Directions) GetValue(content)[0];
+                // check if move action is possible
+                int movementCost;
+                switch((movementCost = this->CanMove(*robot, direction)))
+                {
+                    case ERR_MOVE_BLOCKED:
+                        // this->SendMessage(1, "I:Cannot move there, move is blocked!", GameManager::Sender::GAME);
+                        content = "INFO:Cannot move there, move is blocked!";
+                        break;
+
+                    case ERR_NOT_ENOUGH_AP:
+                        // this->SendMessage(1, "I:Not enough AP!", GameManager::Sender::GAME);
+                        content = "INFO:Not enough AP";
+                        break;
+
+                    default:
+                        // set robot position to new position
+                        robot->Move(direction, movementCost);
+
+                        // log output
+                        this->WriteToPipe("M:" + robotString
+                                                  .append(":")
+                                                  .append(oldPos)
+                                                  .append(":")
+                                                  .append(robot->position.ToString()),
+                                          GameManager::Sender::LOG);
+                        this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+                        break;
+                }
+
+                break;
             }
-            else
+
+            case SHOW: // S:P1
             {
+                // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
+                Robot *robot = robot = this->GetActiveRobot(this->GetValue(content));
+                if(robot == nullptr)
+                {
+                    content = "INFO: Robot not found!";
+                    break;
+                    // this->SendMessage(1, "I:Robot not found!", GameManager::Sender::GAME);
+                }
+
                 std::string data;
                 data.append(1, robot->symbol).append(":")
                         .append(std::to_string(robot->id)).append(":")
@@ -110,41 +109,39 @@ void GameManager::Run()
                         .append(robot->description);
 
                 this->WriteToPipe(data, GameManager::Sender::STATS);
+                break;
             }
 
-            robot = nullptr;
-        }
+            case HELP:
+                // TODO: add manual
+                this->PrintManual();
+                content = "";
+                break;
 
-        if(action == HELP)
-        {
-            // TODO: add manual
-            this->PrintManual();
-            this->SendMessage(1, "", GameManager::Sender::GAME);
-            continue;
-        }
+            case RETREAT:
+                this->WriteToPipe("R", GameManager::Sender::LOG);
+                this->WriteToPipe("L", GameManager::Sender::LOG);
+                this->Wait(1000000);
+                this->CloseDisplay(GameManager::Sender::LOG);
+                this->CloseDisplay(GameManager::Sender::MAP);
+                this->CloseDisplay(GameManager::Sender::STATS);
+                return;
 
-        if(action == RETREAT)
-        {
-            // this->WriteToPipe("R", GameManager::Sender::LOG);
-            this->CloseDisplay(GameManager::Sender::LOG);
-            this->CloseDisplay(GameManager::Sender::MAP);
-            this->CloseDisplay(GameManager::Sender::STATS);
-            return;
-        }
+            case END_TURN:
+                this->WriteToPipe("E:", GameManager::Sender::LOG);
+                // reset action points
+                this->ResetActionPoints();
+                // roundCounter + 1
+                // start enemy round
+                break;
 
-        if(action == END_ROUND)
-        {
-            // this->WriteToPipe("E", GameManager::Sender::LOG);
-            // reset action points
-            this->ResetActionPoints();
-            // roundCounter + 1
-            // start enemy round
+            default:
+                content = "INFO: Invalid command!";
+                break;
         }
-
-        this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
 
         // send message + content
-        this->SendMessage(1, "", GameManager::Sender::GAME);
+        this->SendMessage(1, content, GameManager::Sender::GAME);
     }
 }
 
@@ -426,11 +423,11 @@ void GameManager::ResetActionPoints()
 
 int GameManager::CanMove(Robot robot, Directions direction)
 {
-    robot.Move(direction);
+    robot.Move(direction, 0);
     char tile = this->map->GetGrid()[robot.position.x][robot.position.y];
     if(tile == 'M')
     {
-        return MOVE_BLOCKED;
+        return ERR_MOVE_BLOCKED;
     }
 
     int movementCost = MOVEMENT_COST;
@@ -441,7 +438,7 @@ int GameManager::CanMove(Robot robot, Directions direction)
 
     if((robot.currentActionPoints - movementCost) < 0)
     {
-        return NOT_ENOUGH_AP;
+        return ERR_NOT_ENOUGH_AP;
     }
 
     return movementCost;

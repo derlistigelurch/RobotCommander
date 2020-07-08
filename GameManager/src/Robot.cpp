@@ -19,8 +19,10 @@ void Robot::Attack(Robot &robot) const
     robot.health - this->damage;
 }
 
-void Robot::Move(Directions direction)
+void Robot::Move(Directions direction, int movementCost)
 {
+    this->currentActionPoints -= movementCost;
+
     switch(direction)
     {
         case Directions::NORTH:

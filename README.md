@@ -2,6 +2,7 @@
 A small turn based strategy game, written in C/C++.
 
 The game is still under development. :D
+
 It cannot be played in the current state.
 
 ## About
@@ -46,7 +47,7 @@ As mentioned before, every map may only contain certain letters in order to work
 ### `.map` file
 to create a valid `.map` file some rules must be followed
 * the first line of every `.map` file should contain the dimensions of the map seperated by a `x`
-* the second line contains the number of robots sperated by an `x`. The number of robots (`Players` + `Enemies`) should match the number of `Spawn Point`s.
+* the second line contains the number of robots sperated by an `x`. The number of robots (`Players` + `Enemies`) should match the number of `Spawn Points`.
 
 A valid `.map` file could look like this:
 ```
@@ -73,5 +74,6 @@ MMMMMMMMMMMMMMMM
 ### Fight Commands
 * `M` - Move
 * `A` - Attack
+* `S` - Show
 * `H` - Help
-* `R` - Retreat  
+* `R` - Retreat

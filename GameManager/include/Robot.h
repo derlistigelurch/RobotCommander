@@ -17,7 +17,7 @@ public:
 
     virtual void Attack(Robot &robot) const;
 
-    void Move(Directions direction);
+    void Move(Directions direction, int movementCost);
 
     std::string ToString() const;
 
