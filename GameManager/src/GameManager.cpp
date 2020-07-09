@@ -14,32 +14,80 @@ GameManager::GameManager()
 GameManager::~GameManager()
 {
     this->DeleteRobots();
+    this->CloseDisplay(GameManager::Sender::LOG);
+    this->CloseDisplay(GameManager::Sender::MAP);
+    this->CloseDisplay(GameManager::Sender::STATS);
     delete this->map;
 }
 
 void GameManager::Run()
 {
     this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+    int turnCounter = 1;
 
     while(true)
     {
+        if(turnCounter % 2 == 0)
+        {
+            this->Wait(100000);
+            // enemy make decision -> move -> attack
+            this->WriteToPipe(this->ToString('E').append(1, ':')
+                                      .append(std::to_string(turnCounter)),
+                              GameManager::Sender::LOG);
+            this->ResetActionPoints();
+            turnCounter++;
+        }
+
         std::string content = this->ToUpper(this->ReceiveMessage(GameManager::Sender::GAME).text);
         char action = GetValue(content)[0];
 
         // process input
         switch(action)
         {
-            case ATTACK:
-                // check if enemy is in range
-                // roll damage
-                // reduce enemy health, if enemy is dead delete him
-                // log output
-                break;
+            case ATTACK: // A:P1:E2:DMG
+            {
+                Robot *robot = this->GetActiveRobot(this->GetValue(content));
+                Robot *enemy = this->GetActiveRobot(this->GetValue(content));
+                if(robot == nullptr || enemy == nullptr)
+                {
+                    this->WriteToPipe("I:Robot not found!", GameManager::Sender::LOG);
+                    break;
+                }
 
+                int damage = robot->GetDamage();
+                switch(robot->Attack(enemy))
+                {
+                    case Robot::DESTROYED:
+                        this->DeleteRobot(enemy->symbol, enemy->id);
+                        // D:E1
+                        this->WriteToPipe(
+                                "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
+                                        .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
+                                        .append(":").append(std::to_string(damage)),
+                                GameManager::Sender::LOG);
+                        this->WriteToPipe("D:" + this->ToString(enemy->symbol).append(std::to_string(enemy->id)),
+                                          GameManager::Sender::LOG);
+                        break;
+
+                    case Robot::ERR_NOT_IN_RANGE:
+                        this->WriteToPipe("I:Enemy not in range!", GameManager::Sender::LOG);
+                        continue;
+
+                    default:
+                        this->WriteToPipe(
+                                "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
+                                        .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
+                                        .append(":").append(std::to_string(damage)),
+                                GameManager::Sender::LOG);
+                        break;
+                }
+
+                this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+                break;
+            }
             case MOVE: // M:P1:E
             {
-                std::string robotString = this->GetValue(content);
-                Robot *robot = this->GetActiveRobot(robotString);
+                Robot *robot = this->GetActiveRobot(this->GetValue(content));
                 if(robot == nullptr)
                 {
                     this->WriteToPipe("I:Robot not found!", GameManager::Sender::LOG);
@@ -68,7 +116,9 @@ void GameManager::Run()
 
                     default:
                         robot->Move(direction, movementCost);
-                        this->WriteToPipe("M:" + robotString.append(":")
+                        this->WriteToPipe(this->ToString(action).append(":")
+                                                  .append(this->ToString(robot->symbol)
+                                                                  .append(std::to_string(robot->id))).append(":")
                                                   .append(oldPos).append(":")
                                                   .append(robot->position.ToString()),
                                           GameManager::Sender::LOG);
@@ -88,20 +138,20 @@ void GameManager::Run()
                     break;
                 }
 
-                // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
-                std::string data;
-                data.append(1, robot->symbol).append(":")
-                        .append(std::to_string(robot->id)).append(":")
-                        .append(1, robot->symbol).append(":")
-                        .append(robot->name).append(":")
-                        .append(std::to_string(robot->health)).append(":")
-                        .append(std::to_string(robot->currentActionPoints)).append(":")
-                        .append(std::to_string(robot->actionPoints)).append(":")
-                        .append(std::to_string(robot->damage)).append(":")
-                        .append(std::to_string(robot->attackRadius)).append(":")
-                        .append(robot->description);
-
-                this->WriteToPipe(data, GameManager::Sender::STATS);
+                // SYMBOL|E:ID:SYMBOL:NAME:CURRENT_HEALTH:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:POSITION:DESCRIPTION
+                this->WriteToPipe(this->ToString(robot->symbol).append(":")
+                                          .append(std::to_string(robot->id)).append(":")
+                                          .append(this->ToString(robot->symbol)).append(":")
+                                          .append(robot->name).append(":")
+                                          .append(std::to_string(robot->currentHealth)).append(":")
+                                          .append(std::to_string(robot->health)).append(":")
+                                          .append(std::to_string(robot->currentActionPoints)).append(":")
+                                          .append(std::to_string(robot->actionPoints)).append(":")
+                                          .append(std::to_string(robot->damage)).append(":")
+                                          .append(std::to_string(robot->attackRadius)).append(":")
+                                          .append(robot->position.ToString()).append(":")
+                                          .append(robot->description),
+                                  GameManager::Sender::STATS);
                 break;
             }
 
@@ -110,25 +160,21 @@ void GameManager::Run()
                 this->PrintManual();
                 break;
 
-            case RETREAT:
-                this->WriteToPipe("R", GameManager::Sender::LOG);
+            case RETREAT: // R:
+                this->WriteToPipe(this->ToString(action).append(":"), GameManager::Sender::LOG);
                 this->Wait(1000000);
-                this->CloseDisplay(GameManager::Sender::LOG);
-                this->CloseDisplay(GameManager::Sender::MAP);
-                this->CloseDisplay(GameManager::Sender::STATS);
                 return;
 
-            case END_TURN:
-                this->WriteToPipe("E:", GameManager::Sender::LOG);
-                // reset action points
+            case END_TURN: // E:TURN
+                this->WriteToPipe(this->ToString(action).append(":")
+                                          .append(std::to_string(turnCounter)),
+                                  GameManager::Sender::LOG);
                 this->ResetActionPoints();
-                // roundCounter + 1
-                // start enemy round
+                turnCounter++;
                 break;
 
             default:
                 this->WriteToPipe("I:Invalid command!", GameManager::Sender::LOG);
-                content = "";
                 break;
         }
 
@@ -212,14 +258,20 @@ void GameManager::ShowConfiguration() const
 std::string GameManager::DrawMap()
 {
     std::vector<std::vector<char>> grid = this->map->GetGrid();
-    for(auto &p : this->players)
+    if(!this->players.empty())
     {
-        grid[p->position.y][p->position.x] = p->symbol;
+        for(auto &p : this->players)
+        {
+            grid[p->position.y][p->position.x] = p->symbol;
+        }
     }
 
-    for(auto &e : this->enemies)
+    if(!this->enemies.empty())
     {
-        grid[e->position.y][e->position.x] = e->symbol;
+        for(auto &e : this->enemies)
+        {
+            grid[e->position.y][e->position.x] = e->symbol;
+        }
     }
 
     return this->ToString(grid);
@@ -227,19 +279,25 @@ std::string GameManager::DrawMap()
 
 void GameManager::DeleteRobots()
 {
-    for(auto &robot : this->players)
+    if(!this->players.empty())
     {
-        delete robot;
+        for(auto &r : this->players)
+        {
+            delete r;
+        }
+
+        this->players.clear();
     }
 
-    this->players.clear();
-
-    for(auto &robot : this->enemies)
+    if(!this->enemies.empty())
     {
-        delete robot;
-    }
+        for(auto &r : this->enemies)
+        {
+            delete r;
+        }
 
-    this->enemies.clear();
+        this->enemies.clear();
+    }
 }
 
 // TODO: refactor
@@ -284,7 +342,7 @@ void GameManager::LoadRobots(const std::string &identifier)
         int pos = 0;
         line = ConfigManager::RemoveNewLine(line);
 
-        if(line == "ROBOT" || line.empty())
+        if(line == "ROBOT" || line.empty() || counter == this->playerCount)
         {
             continue;
         }
@@ -472,4 +530,37 @@ Robot *GameManager::GetActiveRobot(const std::string &line)
     }
 
     return nullptr;
+}
+
+std::string GameManager::ToString(char c) const
+{
+    std::string s;
+    s = c;
+    return s;
+}
+
+void GameManager::DeleteRobot(char symbol, int id)
+{
+    if(symbol == PLAYER[0])
+    {
+        for(auto &player : this->players)
+        {
+            if(player->id == id && player->symbol == symbol)
+            {
+                delete player;
+                // this->players.erase(this->players.begin() + i);
+            }
+        }
+    }
+    else
+    {
+        for(auto &enemy : this->enemies)
+        {
+            if(enemy->id == id && enemy->symbol == symbol)
+            {
+                delete enemy;
+                // this->enemies.erase(this->enemies.begin() + i);
+            }
+        }
+    }
 }

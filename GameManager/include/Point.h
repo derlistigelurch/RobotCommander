@@ -10,6 +10,8 @@ public:
 
     ~Point() = default;
 
+    bool operator==(const Point &point) const;
+
     Point operator+(const Point &point) const;
 
     Point operator-(const Point &point) const;

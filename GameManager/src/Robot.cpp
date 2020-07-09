@@ -1,3 +1,5 @@
+#include <random>
+
 #include "../include/Robot.h"
 
 Robot::Robot(int id, char symbol, const std::string &name, int health, int actionPoints, int damage,
@@ -7,6 +9,7 @@ Robot::Robot(int id, char symbol, const std::string &name, int health, int actio
     this->symbol = symbol;
     this->name = name;
     this->health = health;
+    this->currentHealth = health;
     this->actionPoints = actionPoints;
     this->currentActionPoints = actionPoints;
     this->damage = damage;
@@ -14,9 +17,18 @@ Robot::Robot(int id, char symbol, const std::string &name, int health, int actio
     this->description = description;
 }
 
-void Robot::Attack(Robot &robot) const
+int Robot::Attack(Robot *robot) const
 {
-    robot.health - this->damage;
+    if(!this->IsInRange(robot))
+    {
+        return ERR_NOT_IN_RANGE;
+    }
+
+    robot->currentHealth -= this->damage;
+    if(robot->currentHealth <= 0)
+    {
+        return DESTROYED;
+    }
 }
 
 void Robot::Move(Directions direction, int movementCost)
@@ -43,7 +55,44 @@ void Robot::Move(Directions direction, int movementCost)
     }
 }
 
-std::string Robot::ToString() const
+int Robot::GetDamage() const
 {
-    return std::to_string(this->symbol).append(std::to_string(this->id));
+    std::random_device generator;
+    std::uniform_int_distribution<int> distribution(0, 2);
+    int amount = 0;
+
+    for(int i = 0; i < this->damage; i++)
+    {
+        amount += distribution(generator);
+    }
+
+    return amount;
+}
+
+bool Robot::IsInRange(Robot *robot) const
+{
+    for(int i = 0; i < this->attackRadius; ++i)
+    {
+        if(this->position + Point(0, i) == robot->position)
+        {
+            return true;
+        }
+
+        if(this->position + Point(0, -i) == robot->position)
+        {
+            return true;
+        }
+
+        if(this->position + Point(i, 0) == robot->position)
+        {
+            return true;
+        }
+
+        if(this->position + Point(-i, 0) == robot->position)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }

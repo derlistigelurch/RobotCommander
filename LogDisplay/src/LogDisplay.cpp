@@ -78,27 +78,27 @@ int main()
                     break;
 
                 case END_TURN:
-                    // E:
-                    std::cout << ESCAPE << BG_LIGHT_RED << SEPARATOR << FG_BLACK << END_ESCAPE << "END TURN:" << RESET
-                              << " AP have been restored" << std::endl;
+                    // E:TURN
+                    std::cout << ESCAPE << BG_LIGHT_RED << SEPARATOR << FG_BLACK << END_ESCAPE << "END TURN "
+                              << GetValue(line) << ":" << RESET << " AP have been restored" << std::endl << std::flush;
                     break;
 
                 case WIN:
                     // W:
                     std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << "WIN:" << RESET
-                              << " Player won battle." << std::endl;
+                              << " Player won battle." << std::endl << std::flush;
                     break;
 
                 case LOSE:
                     // L:
                     std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << "LOSE:" << RESET
-                              << " Player lost battle." << std::endl;
+                              << " Player lost battle." << std::endl << std::flush;
                     break;
 
                 case INFO:
                     // I:MESSAGE
-                    std::cout << ESCAPE << FG_CYAN << SEPARATOR << FG_BLACK << END_ESCAPE << "INFO: " << RESET
-                              << GetValue(line) << std::endl;
+                    std::cout << ESCAPE << BG_GREY << SEPARATOR << FG_BLACK << END_ESCAPE << "INFO:" << RESET
+                              << " " << GetValue(line) << std::endl << std::flush;
                     break;
 
                 default:

@@ -13,7 +13,7 @@ void IOManager::GameMode()
     {
         std::cout << "\033[2J\033[1;1H";
         message = this->ReceiveMessage(IOManager::Sender::GAME);
-        std::cout << message.text << std::endl << std::flush;
+        std::cout << message.text << std::flush;
 
         std::fill(message.text, message.text + sizeof(message.text), 0);
 

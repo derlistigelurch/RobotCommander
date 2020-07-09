@@ -15,25 +15,32 @@ public:
 
     virtual ~Robot() = default;
 
-    virtual void Attack(Robot &robot) const;
+    virtual int Attack(Robot *robot) const;
 
-    void Move(Directions direction, int movementCost);
+    virtual void Move(Directions direction, int movementCost);
 
-    std::string ToString() const;
+    int GetDamage() const;
+
+    bool IsInRange(Robot *robot) const;
 
     int id;
     int attackRadius;
     int health;
+    int currentHealth;
     int actionPoints;
     int currentActionPoints;
+
     int damage;
 
     char symbol;
 
     Point position;
-
     std::string name;
+
     std::string description;
+    static const int DESTROYED = 36;
+
+    static const int ERR_NOT_IN_RANGE = 45;
 };
 
 

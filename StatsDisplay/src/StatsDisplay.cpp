@@ -32,7 +32,7 @@ int main()
         while(getline(pipe, line))
         {
             std::cout << "\033[2J\033[1;1H";
-            // SYMBOL|E:ID:SYMBOL:NAME:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:DESCRIPTION
+            // SYMBOL|E:ID:SYMBOL:NAME:CURRENT_HEALTH:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:POSITION:DESCRIPTION
             line = ConfigManager::RemoveNewLine(line);
 
             if(line == "shutdown")
@@ -57,12 +57,14 @@ int main()
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "NAME:" << RESET << " "
                       << GetValue(line) << std::flush << std::endl;
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "HEALTH:" << RESET << " "
-                      << GetValue(line) << std::flush << std::endl;
+                      << GetValue(line) << "/" << GetValue(line) << std::flush << std::endl;
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "ACTION_POINTS:" << RESET << " "
                       << GetValue(line) << "/" << GetValue(line) << std::flush << std::endl;
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "DAMAGE:" << RESET << " "
                       << GetValue(line) << std::flush << std::endl;
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "ATTACK_RADIUS:" << RESET << " "
+                      << GetValue(line) << std::flush << std::endl;
+            std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "POSITION:" << RESET << " "
                       << GetValue(line) << std::flush << std::endl;
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "DESCRIPTION:" << RESET << " "
                       << GetValue(line) << std::flush << std::endl;

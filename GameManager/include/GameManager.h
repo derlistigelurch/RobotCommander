@@ -61,6 +61,13 @@ private:
     std::string ToString(const std::vector<std::vector<char>> &grid);
 
     /**
+     * Converts a character into a std::string
+     * @param c
+     * @return returns the character as string
+     */
+    std::string ToString(char c) const;
+
+    /**
      * Prints the manual of the game
      */
     void PrintManual() const;
@@ -98,6 +105,7 @@ private:
     static const int MOVEMENT_COST = 1;
     static const int ERR_NOT_ENOUGH_AP = 29;
     static const int ERR_MOVE_BLOCKED = 32;
+    static const int DESTROYED = 36;
 
     static const char DELIMITER = ':';
     static const char MOVE = 'M';
@@ -140,6 +148,8 @@ public:
      * @param identifier - string to decide which .save file should be loaded
      */
     void LoadRobots(const std::string &identifier);
+
+    void DeleteRobot(char symbol, int id);
 };
 
 

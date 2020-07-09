@@ -26,6 +26,11 @@ Point Point::operator-(const int &number) const
     return Point(this->x - number, this->y - number);
 }
 
+bool Point::operator==(const Point &point) const
+{
+    return this->x == point.x && this->y == point.y;
+}
+
 std::string Point::ToString() const
 {
     return "(" + std::to_string(this->x)

@@ -13,7 +13,7 @@ int main()
     auto *ioManager = new IOManager();
     ioManager->Wait(250000);
 
-    // ioManager->GameMode();
+    ioManager->GameMode();
 
     std::string input;
     struct Message message{};
