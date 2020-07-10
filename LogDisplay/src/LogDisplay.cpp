@@ -86,13 +86,13 @@ int main()
                 case WIN:
                     // W:
                     std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << "WIN:" << RESET
-                              << " Player won battle." << std::endl << std::flush;
+                              << " Player won the fight." << std::endl << std::flush;
                     break;
 
                 case LOSE:
                     // L:
                     std::cout << ESCAPE << BG_YELLOW << SEPARATOR << FG_BLACK << END_ESCAPE << "LOSE:" << RESET
-                              << " Player lost battle." << std::endl << std::flush;
+                              << " Player lost the fight." << std::endl << std::flush;
                     break;
 
                 case INFO:
