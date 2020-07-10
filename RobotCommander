@@ -1,4 +1,6 @@
 mkdir ./bin &> /dev/null
+mkdir ./pipes &> /dev/null
+
 make all > /dev/null
 
 ./bin/RobotCommander
