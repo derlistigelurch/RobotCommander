@@ -103,8 +103,11 @@ private:
     std::vector<Robot *> enemies;
 
     static const int MOVEMENT_COST = 1;
+    static const int ATTACK_COST = 1;
     static const int ERR_NOT_ENOUGH_AP = 29;
     static const int ERR_MOVE_BLOCKED = 32;
+    static const int ERR_OUT_OF_RANGE = 33;
+    static const int ERR_ATTACK_IS_BLOCKED = 34;
     static const int DESTROYED = 36;
 
     static const char DELIMITER = ':';
@@ -150,6 +153,8 @@ public:
     void LoadRobots(const std::string &identifier);
 
     void DeleteRobot(char symbol, int id);
+
+    int CanAttack(Robot *robot, Robot *enemy);
 };
 
 

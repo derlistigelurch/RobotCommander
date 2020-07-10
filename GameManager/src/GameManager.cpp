@@ -27,6 +27,15 @@ void GameManager::Run()
 
     while(true)
     {
+        if(playerCount == 0)
+        {
+            this->WriteToPipe("L:", GameManager::Sender::LOG);
+        }
+        if(enemyCount == 0)
+        {
+            this->WriteToPipe("W:", GameManager::Sender::LOG);
+        }
+
         if(turnCounter % 2 == 0)
         {
             this->Wait(100000);
@@ -54,35 +63,53 @@ void GameManager::Run()
                     break;
                 }
 
-                int damage = robot->GetDamage();
-                switch(robot->Attack(enemy))
+                if(robot->currentActionPoints <= 0)
                 {
-                    case Robot::DESTROYED:
-                        this->DeleteRobot(enemy->symbol, enemy->id);
-                        // D:E1
-                        this->WriteToPipe(
-                                "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
-                                        .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
-                                        .append(":").append(std::to_string(damage)),
-                                GameManager::Sender::LOG);
-                        this->WriteToPipe("D:" + this->ToString(enemy->symbol).append(std::to_string(enemy->id)),
-                                          GameManager::Sender::LOG);
+                    this->WriteToPipe("I:Not enough AP!", GameManager::Sender::LOG);
+                    break;
+                }
+
+                int damage;
+                // switch(damage = robot->Attack(enemy))
+                switch(damage = this->CanAttack(robot, enemy))
+                {
+                    case ERR_ATTACK_IS_BLOCKED:
+                        this->WriteToPipe("I:Cannot attack robot, robot is blocked!", GameManager::Sender::LOG);
                         break;
 
-                    case Robot::ERR_NOT_IN_RANGE:
+                    case ERR_OUT_OF_RANGE:
                         this->WriteToPipe("I:Enemy not in range!", GameManager::Sender::LOG);
-                        continue;
+                        break;
 
                     default:
-                        this->WriteToPipe(
-                                "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
-                                        .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
-                                        .append(":").append(std::to_string(damage)),
-                                GameManager::Sender::LOG);
+                        robot->currentActionPoints = 0;
+                        robot->Attack(enemy, damage);
+                        if(enemy->currentHealth <= 0)
+                        {
+                            this->DeleteRobot(enemy->symbol, enemy->id);
+                            robot->currentActionPoints = 0;
+                            // D:E1
+                            this->WriteToPipe(
+                                    "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
+                                            .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
+                                            .append(":").append(std::to_string(damage)),
+                                    GameManager::Sender::LOG);
+                            this->WriteToPipe("D:" + this->ToString(enemy->symbol).append(std::to_string(enemy->id)),
+                                              GameManager::Sender::LOG);
+                        }
+                        else
+                        {
+                            this->WriteToPipe(
+                                    "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
+                                            .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
+                                            .append(":").append(std::to_string(damage)),
+                                    GameManager::Sender::LOG);
+                        }
+
+                        this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
                         break;
                 }
 
-                this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
                 break;
             }
             case MOVE: // M:P1:E
@@ -230,6 +257,7 @@ void GameManager::Initialize()
 
     ScreenManager::ShowFightScreen();
     this->ShowConfiguration();
+    ScreenManager::ShowFightMenu();
 
     this->LoadRobots(PLAYER);
     this->LoadRobots(ENEMY);
@@ -240,14 +268,14 @@ void GameManager::Initialize()
 void GameManager::ShowConfiguration() const
 {
     std::cout << "Map Path: " << this->path << std::endl;
-    std::cout << "Number of Players: ";
-    if(this->playerCount > 1 && this->playerCount < 10)
+    std::cout << "Number of players: ";
+    if(this->playerCount > 0 && this->playerCount < 10)
     {
         std::cout << this->playerCount;
     }
 
-    std::cout << std::endl << "Number of Players: ";
-    if(this->enemyCount > 1 && this->enemyCount < 10)
+    std::cout << std::endl << "Number of enemies: ";
+    if(this->enemyCount > 0 && this->enemyCount < 10)
     {
         std::cout << this->enemyCount;
     }
@@ -473,7 +501,7 @@ void GameManager::ResetActionPoints()
 int GameManager::CanMove(Robot robot, Directions direction)
 {
     robot.Move(direction, 0);
-    char tile = this->map->GetGrid()[robot.position.x][robot.position.y];
+    char tile = this->map->GetGrid()[robot.position.y][robot.position.x];
     if(tile == 'M')
     {
         return ERR_MOVE_BLOCKED;
@@ -543,24 +571,64 @@ void GameManager::DeleteRobot(char symbol, int id)
 {
     if(symbol == PLAYER[0])
     {
-        for(auto &player : this->players)
+        for(int i = 0; i < this->players.size(); i++)
         {
-            if(player->id == id && player->symbol == symbol)
+            if(this->players[i]->id == id && this->players[i]->symbol == symbol)
             {
-                delete player;
-                // this->players.erase(this->players.begin() + i);
+                this->players.erase(this->players.begin() + i);
+                this->playerCount--;
             }
         }
     }
     else
     {
-        for(auto &enemy : this->enemies)
+        for(int i = 0; i < this->enemies.size(); i++)
         {
-            if(enemy->id == id && enemy->symbol == symbol)
+            if(this->enemies[i]->id == id && this->enemies[i]->symbol == symbol)
             {
-                delete enemy;
-                // this->enemies.erase(this->enemies.begin() + i);
+                this->enemies.erase(this->enemies.begin() + i);
+                this->enemyCount--;
             }
         }
     }
+}
+
+// TODO: return ERR_ATTACK_IS_BLOCKED if 'M' is between player and enemy
+int GameManager::CanAttack(Robot *robot, Robot *enemy)
+{
+    char tile;
+    int damage = robot->GetDamage();
+    Point point = Point(0, 0);
+    for(int i = 1; i <= robot->attackRadius; i++)
+    {
+        if(robot->position + Point(0, i) == enemy->position)
+        {
+            return damage;
+        }
+
+        if(robot->position + Point(0, i) == enemy->position)
+        {
+            return damage;
+        }
+
+        if(robot->position + Point(i, 0) == enemy->position)
+        {
+
+            return damage;
+        }
+
+        if(robot->position + Point(0, -i) == enemy->position)
+        {
+
+            return damage;
+        }
+
+        if(robot->position + Point(-i, 0) == robot->position)
+        {
+
+            return damage;
+        }
+    }
+
+    return ERR_OUT_OF_RANGE;
 }

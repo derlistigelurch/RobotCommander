@@ -15,7 +15,7 @@ public:
 
     virtual ~Robot() = default;
 
-    virtual int Attack(Robot *robot) const;
+    virtual void Attack(Robot *robot, int damage) const;
 
     virtual void Move(Directions direction, int movementCost);
 
@@ -39,8 +39,6 @@ public:
 
     std::string description;
     static const int DESTROYED = 36;
-
-    static const int ERR_NOT_IN_RANGE = 45;
 };
 
 

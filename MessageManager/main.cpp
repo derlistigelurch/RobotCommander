@@ -18,7 +18,7 @@ int main()
 }
 
 // TODO:
-//  Player attack
+//  Player attack (M)
 //  Show Ascii image in the StatsDisplay
 //  Write error messages to log file
 //  Signal handling

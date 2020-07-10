@@ -17,18 +17,9 @@ Robot::Robot(int id, char symbol, const std::string &name, int health, int actio
     this->description = description;
 }
 
-int Robot::Attack(Robot *robot) const
+void Robot::Attack(Robot *robot, int damage) const
 {
-    if(!this->IsInRange(robot))
-    {
-        return ERR_NOT_IN_RANGE;
-    }
-
-    robot->currentHealth -= this->damage;
-    if(robot->currentHealth <= 0)
-    {
-        return DESTROYED;
-    }
+    robot->currentHealth -= damage;
 }
 
 void Robot::Move(Directions direction, int movementCost)

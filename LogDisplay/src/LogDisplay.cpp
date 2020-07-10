@@ -68,7 +68,7 @@ int main()
                 case DESTROY:
                     // D:R
                     std::cout << ESCAPE << BG_RED << SEPARATOR << FG_BLACK << END_ESCAPE << "DESTROY:" << RESET << " "
-                              << GetValue(line) << "has been destroyed." << std::endl << std::flush;
+                              << GetValue(line) << " has been destroyed." << std::endl << std::flush;
                     break;
 
                 case RETREAT:
