@@ -3,8 +3,6 @@ A small turn based strategy game, written in C/C++.
 
 The game is still under development. :D
 
-It cannot be played in the current state.
-
 ## About
 In this game you take control over a bunch of robots.
 In order to win you have to destroy all enemy robots.
@@ -19,7 +17,7 @@ You can close the support windows all the time, but you will lose the ability to
 
 If you close one of the support windows by accident, you have to open it manually in order to use it again.
 
-I will add a `Makefile` later.
+To run the game you just have to run the `RobotCommander` script in your terminal.
 
 ## Robots
 Each robot consists of the same attributes.
@@ -27,8 +25,8 @@ Each robot consists of the same attributes.
 * `Id` - random numeric value
 * `Name` - name of the robot (i prefer names of old yu-gi-oh cards ;-))
 * `Symbol` - char which represents your robot on the map (Default: `P` - Player, `E` - Enemy)
-* `Action Points` - asd
-* `Attack Radius` - asd
+* `Action Points` - Number of actions a robot can perform in one round
+* `Attack Radius` - Attack range of the robot
 * `Damage` - number of d3 rolled to determine the damage
 * `Description` - description of a robot
 * `Health` - amount of damage a robot can take

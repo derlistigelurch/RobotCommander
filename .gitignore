@@ -199,3 +199,4 @@ fabric.properties
 # exclude .idea folder
 */.idea/
 */CMakeLists.txt
+bin/*
