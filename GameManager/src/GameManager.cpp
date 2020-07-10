@@ -1,5 +1,6 @@
 #include "../include/GameManager.h"
 #include "../../MessageManager/include/ConfigManager.h"
+#include "../../MapDisplay/include/TileTypes.h"
 
 
 GameManager::GameManager()
@@ -328,7 +329,6 @@ void GameManager::DeleteRobots()
     }
 }
 
-// TODO: refactor
 void GameManager::LoadRobots(const std::string &identifier)
 {
     std::string robotsPath;
@@ -593,42 +593,61 @@ void GameManager::DeleteRobot(char symbol, int id)
     }
 }
 
-// TODO: return ERR_ATTACK_IS_BLOCKED if 'M' is between player and enemy
 int GameManager::CanAttack(Robot *robot, Robot *enemy)
 {
-    char tile;
     int damage = robot->GetDamage();
     Point point = Point(0, 0);
     for(int i = 1; i <= robot->attackRadius; i++)
     {
-        if(robot->position + Point(0, i) == enemy->position)
+        if(this->IsInRange(robot->position + Point(0, i), enemy->position))
         {
-            return damage;
+            return this->IsAttackBlocked(robot->position, enemy->position, Point(0, 1))
+                   ? ERR_ATTACK_IS_BLOCKED
+                   : damage;
         }
 
-        if(robot->position + Point(0, i) == enemy->position)
+        if(this->IsInRange(robot->position + Point(i, 0), enemy->position))
         {
-            return damage;
+            return this->IsAttackBlocked(robot->position, enemy->position, Point(1, 0))
+                   ? ERR_ATTACK_IS_BLOCKED
+                   : damage;
         }
 
-        if(robot->position + Point(i, 0) == enemy->position)
+        if(this->IsInRange(robot->position + Point(0, -i), enemy->position))
         {
-
-            return damage;
+            return this->IsAttackBlocked(robot->position, enemy->position, Point(0, -1))
+                   ? ERR_ATTACK_IS_BLOCKED
+                   : damage;
         }
 
-        if(robot->position + Point(0, -i) == enemy->position)
+        if(this->IsInRange(robot->position + Point(-i, 0), enemy->position))
         {
-
-            return damage;
-        }
-
-        if(robot->position + Point(-i, 0) == robot->position)
-        {
-
-            return damage;
+            return this->IsAttackBlocked(robot->position, enemy->position, Point(-1, 0))
+                   ? ERR_ATTACK_IS_BLOCKED
+                   : damage;
         }
     }
 
     return ERR_OUT_OF_RANGE;
+}
+
+bool GameManager::IsAttackBlocked(Point robotPosition, Point enemyPosition, Point point)
+{
+    Point currentPoint = robotPosition;
+    while(currentPoint != enemyPosition)
+    {
+        if(this->map->GetGrid()[currentPoint.y][currentPoint.x] == (char) TileTypes::MOUNTAIN)
+        {
+            return true;
+        }
+
+        currentPoint += point;
+    }
+
+    return false;
+}
+
+bool GameManager::IsInRange(Point robotPosition, Point enemyPosition)
+{
+    return robotPosition == enemyPosition;
 }

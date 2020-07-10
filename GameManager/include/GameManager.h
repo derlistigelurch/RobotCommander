@@ -79,8 +79,16 @@ private:
      */
     std::string GetValue(std::string &line);
 
+    /**
+     * Returns a pointer to a robot that should perform the action
+     * @param line - string which contains the id and the symbol of a robot
+     * @return returns a pointer to the currently active robot
+     */
     Robot *GetActiveRobot(const std::string &line);
 
+    /**
+     * Resets the Action Points (AP) of all robots
+     */
     void ResetActionPoints();
 
     /**
@@ -91,6 +99,51 @@ private:
      * if movement is blocked
      */
     int CanMove(Robot robot, Directions direction);
+
+    /**
+     * Calls the draw function of the map
+     * @return returns the current map as a string
+     */
+    std::string DrawMap();
+
+    /**
+     * Loads all robots from the .save file
+     * @param identifier - string to decide which .save file should be loaded
+     */
+    void LoadRobots(const std::string &identifier);
+
+    /**
+     * Deletes one robot based on the id and symbol, does nothing if robot not exists
+     * @param symbol - symbol of the robot
+     * @param id - id of the robot
+     */
+    void DeleteRobot(char symbol, int id);
+
+    /**
+     * Checks if a robot can attack another robot
+     * @param robot
+     * @param enemy
+     * @return returns the damage dealt by the robot, returns ERR_OUT_OF_RANGE if enemy robot is not in range or
+     * ERR_ATTACK_IS_BLOCKED if the enemy robot is out of sight
+     */
+    int CanAttack(Robot *robot, Robot *enemy);
+
+    /**
+     * Checks if a mountain is between the attacking robot and an enemy
+     * @param robotPosition - position of the attacking robot
+     * @param enemyPosition - position of the enemy robot
+     * @param point
+     * @return returns true if a mountain ('M') is found
+     */
+    bool IsAttackBlocked(Point robotPosition, Point enemyPosition, Point point);
+
+    /**
+     * Checks if an enemy robot is in range of an attacking robot
+     * @param robotPosition - position of the attacking robot
+     * @param enemyPosition - position of the enemy robot
+     * @return returns true if an enemy robot is in range
+     */
+    bool IsInRange(Point robotPosition, Point enemyPosition);
 
     int playerCount;
     int enemyCount;
@@ -139,22 +192,6 @@ public:
      * Starts the Fight
      */
     void Run();
-
-    /**
-     * Calls the draw function of the map
-     * @return returns the current map as a string
-     */
-    std::string DrawMap();
-
-    /**
-     * Loads all robots from the .save file
-     * @param identifier - string to decide which .save file should be loaded
-     */
-    void LoadRobots(const std::string &identifier);
-
-    void DeleteRobot(char symbol, int id);
-
-    int CanAttack(Robot *robot, Robot *enemy);
 };
 
 

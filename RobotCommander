@@ -1,0 +1,4 @@
+mkdir ./bin &> /dev/null
+make all > /dev/null
+
+./bin/RobotCommander

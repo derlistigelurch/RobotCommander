@@ -31,10 +31,21 @@ bool Point::operator==(const Point &point) const
     return this->x == point.x && this->y == point.y;
 }
 
+bool Point::operator!=(const Point &point) const
+{
+    return !(this->x == point.x && this->y == point.y);
+}
+
 std::string Point::ToString() const
 {
     return "(" + std::to_string(this->x)
             .append("|")
             .append(std::to_string(this->y))
             .append(")");
+}
+
+void Point::operator+=(const Point &point)
+{
+    this->x += point.x;
+    this->y += point.y;
 }
