@@ -4,7 +4,7 @@
 #include "include/ScreenManager.h"
 #include "../MessageManager/include/ConfigManager.h"
 
-int main(int argc, char *argv[])
+int main()
 {
     auto configManager = new ConfigManager();
 

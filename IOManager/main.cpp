@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstring>
 
+#include "../MapDisplay/include/Colors.h"
 #include "../MessageManager/include/ConfigManager.h"
 #include "../MessageManager/include/Message.h"
 #include "include/IOManager.h"
@@ -13,7 +14,7 @@ int main()
     auto *ioManager = new IOManager();
     ioManager->Wait(250000);
 
-    // ioManager->GameMode();
+    ioManager->GameMode();
 
     std::string input;
     struct Message message{};
@@ -23,7 +24,7 @@ int main()
     ioManager->SendMessage(6, "R", IOManager::Sender::IO);
     while(true)
     {
-        std::cout << "\033[2J\033[1;1H";
+        std::cout << CLEAR;
         message = ioManager->ReceiveMessage(IOManager::Sender::IO);
         std::cout << message.text << std::flush;
 

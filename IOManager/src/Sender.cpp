@@ -47,6 +47,8 @@ int Sender::GetKey(const std::string &identifier) const
     {
         return ConfigManager().gameKey;
     }
+
+    return ERR_KEY_NOT_FOUND;
 }
 
 void Sender::SetId(int id, const std::string &identifier)
@@ -73,6 +75,8 @@ int Sender::GetId(const std::string &identifier) const
     {
         return this->gameMessageId;
     }
+
+    return ERR_ID_NOT_FOUND;
 }
 
 void Sender::GetMessageQueue(const std::string &identifier)
@@ -134,6 +138,8 @@ std::string Sender::GetPipe(const std::string &identifier) const
     {
         return ConfigManager().statsPipe;
     }
+
+    return ERR_PIPE_NOT_FOUND;
 }
 
 void Sender::Wait(int microseconds) const

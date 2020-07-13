@@ -6,7 +6,7 @@
 class ConfigManager
 {
 private:
-    inline static const std::string CONFIG_PATH = "config/RobotCommander.config";
+    inline static const std::string CONFIG_PATH = "../../config/test_RobotCommander.config";
 
 public:
     ConfigManager();
@@ -35,6 +35,7 @@ public:
     std::string ioPath;
     std::string playerRobotsPath;
     std::string enemyRobotsPath;
+    std::string picturePath;
 
     int ioKey;
     int gameKey;
@@ -54,6 +55,7 @@ public:
     inline static const std::string IO_PATH_IDENTIFIER = "IO_PATH";
     inline static const std::string PLAYER_ROBOTS_PATH_IDENTIFIER = "P_ROBOTS_PATH";
     inline static const std::string ENEMY_ROBOTS_PATH_IDENTIFIER = "E_ROBOTS_PATH";
+    inline static const std::string PICTURE_PATH_IDENTIFIER = "PICTURE_PATH";
 };
 
 

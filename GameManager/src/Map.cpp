@@ -110,7 +110,7 @@ void Map::SetNumberOfRobots()
     this->playerCount = stoi(line.substr(0, (pos = line.find(DELIMITER))), nullptr, 10);
     this->enemyCount = stoi(line.substr(pos + 1, line.length()), nullptr, 10);
 
-    if(this->enemyCount < 0 || this->enemyCount > 10 || this->playerCount < 0 && this->playerCount > 10)
+    if(this->enemyCount < 0 || this->enemyCount > 10 || (this->playerCount < 0 && this->playerCount > 10))
     {
         std::cerr << "ERROR: Invalid number of robots " << std::endl;
         std::exit(EXIT_FAILURE);

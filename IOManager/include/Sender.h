@@ -83,11 +83,15 @@ public:
     int ioMessageId;
     int gameMessageId;
 
+    static const int ERR_KEY_NOT_FOUND = 59;
+    static const int ERR_ID_NOT_FOUND = 60;
+
     inline static const std::string IO = "IO";
     inline static const std::string GAME = "GAME";
     inline static const std::string MAP = "MAP";
     inline static const std::string LOG = "LOG";
     inline static const std::string STATS = "STATS";
+    inline static const std::string ERR_PIPE_NOT_FOUND = "";
 };
 
 

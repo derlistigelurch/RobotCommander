@@ -17,7 +17,7 @@ void ConfigManager::LoadConfig()
 
     if(!configFile.is_open())
     {
-        std::cerr << "ERROR: Unable to read from config file" <<std::endl << std::flush;
+        std::cerr << "ERROR: Unable to read from config file" << std::endl << std::flush;
         std::exit(EXIT_FAILURE);
     }
 
@@ -120,6 +120,13 @@ void ConfigManager::LoadConfig()
             this->enemyRobotsPath = ConfigManager::RemoveNewLine(line);
             continue;
         }
+
+        if(line == ConfigManager::PICTURE_PATH_IDENTIFIER)
+        {
+            getline(configFile, line);
+            this->picturePath = ConfigManager::RemoveNewLine(line);
+            continue;
+        }
     }
 
     configFile.close();
@@ -143,4 +150,6 @@ std::string ConfigManager::RemoveNewLine(std::string string)
         string.erase(std::remove(string.begin(), string.end(), '\r'), string.end());
         return string;
     }
+
+    return string;
 }

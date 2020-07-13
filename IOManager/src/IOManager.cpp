@@ -1,6 +1,8 @@
-#include <iostream>
 #include "../include/IOManager.h"
 
+#include <iostream>
+
+#include "../../MapDisplay/include/Colors.h"
 
 void IOManager::GameMode()
 {
@@ -11,7 +13,7 @@ void IOManager::GameMode()
 
     while(true)
     {
-        std::cout << "\033[2J\033[1;1H";
+        std::cout << CLEAR;
         message = this->ReceiveMessage(IOManager::Sender::GAME);
         std::cout << message.text << std::flush;
 

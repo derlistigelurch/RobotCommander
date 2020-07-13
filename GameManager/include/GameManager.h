@@ -152,6 +152,8 @@ private:
 
     Map *map;
 
+    std::vector<std::string> robotPictures;
+
     std::vector<Robot *> players;
     std::vector<Robot *> enemies;
 
@@ -192,6 +194,8 @@ public:
      * Starts the Fight
      */
     void Run();
+
+    void LoadPictures();
 };
 
 

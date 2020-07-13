@@ -1,9 +1,10 @@
 #ifndef MAP_COLORS_H
 #define MAP_COLORS_H
 
-#define RESET "\e[0m"
+#define RESET "\033[0m"
+#define CLEAR "\033[2J\033[1;1H"
 
-#define ESCAPE "\e["
+#define ESCAPE "\033["
 #define SEPARATOR ";"
 #define END_ESCAPE "m"
 

@@ -3,7 +3,8 @@
 #include "../include/Robot.h"
 
 Robot::Robot(int id, char symbol, const std::string &name, int health, int actionPoints, int damage,
-             int attackRadius, const std::string &description, Point position) : position(position)
+             int attackRadius, const std::string &description, Point position, const std::string &picture)
+        : position(position)
 {
     this->id = id;
     this->symbol = symbol;
@@ -15,11 +16,12 @@ Robot::Robot(int id, char symbol, const std::string &name, int health, int actio
     this->damage = damage;
     this->attackRadius = attackRadius;
     this->description = description;
+    this->picture = picture;
 }
 
-void Robot::Attack(Robot *robot, int damage) const
+void Robot::Attack(Robot *robot, int dmg) const
 {
-    robot->currentHealth -= damage;
+    robot->currentHealth -= dmg;
 }
 
 void Robot::Move(Directions direction, int movementCost)

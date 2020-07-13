@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "../include/GameManager.h"
 #include "../../MessageManager/include/ConfigManager.h"
 #include "../../MapDisplay/include/TileTypes.h"
@@ -9,6 +10,7 @@ GameManager::GameManager()
     this->enemyCount = 0;
     this->map = nullptr;
 
+    this->LoadPictures();
     this->Initialize();
 }
 
@@ -159,7 +161,7 @@ void GameManager::Run()
 
             case SHOW: // S:P1
             {
-                Robot *robot = robot = this->GetActiveRobot(this->GetValue(content));
+                Robot *robot = this->GetActiveRobot(this->GetValue(content));
                 if(robot == nullptr)
                 {
                     this->WriteToPipe("I:Robot not found!", GameManager::Sender::LOG);
@@ -438,13 +440,15 @@ void GameManager::LoadRobots(const std::string &identifier)
         if(identifier == PLAYER)
         {
             this->players.push_back(new Player(id, symbol, name, health, actionPoints, damage, attackRadius,
-                                               description, this->map->playerSpawnPoints[counter]));
+                                               description, this->map->playerSpawnPoints[counter],
+                                               this->robotPictures[rand() % this->robotPictures.size()]));
         }
 
         if(identifier == ENEMY)
         {
             this->enemies.push_back(new Enemy(id, symbol, name, health, actionPoints, damage, attackRadius,
-                                              description, this->map->enemySpawnPoints[counter]));
+                                              description, this->map->enemySpawnPoints[counter],
+                                              this->robotPictures[0]));
         }
 
         counter++;
@@ -502,13 +506,13 @@ int GameManager::CanMove(Robot robot, Directions direction)
 {
     robot.Move(direction, 0);
     char tile = this->map->GetGrid()[robot.position.y][robot.position.x];
-    if(tile == 'M')
+    if(tile == (char) TileTypes::MOUNTAIN)
     {
         return ERR_MOVE_BLOCKED;
     }
 
     int movementCost = MOVEMENT_COST;
-    if(tile == 'W')
+    if(tile == (char) TileTypes::WATER)
     {
         movementCost++;
     }
@@ -571,7 +575,7 @@ void GameManager::DeleteRobot(char symbol, int id)
 {
     if(symbol == PLAYER[0])
     {
-        for(int i = 0; i < this->players.size(); i++)
+        for(int i = 0; i < (int) this->players.size(); i++)
         {
             if(this->players[i]->id == id && this->players[i]->symbol == symbol)
             {
@@ -582,7 +586,7 @@ void GameManager::DeleteRobot(char symbol, int id)
     }
     else
     {
-        for(int i = 0; i < this->enemies.size(); i++)
+        for(int i = 0; i < (int) this->enemies.size(); i++)
         {
             if(this->enemies[i]->id == id && this->enemies[i]->symbol == symbol)
             {
@@ -650,4 +654,30 @@ bool GameManager::IsAttackBlocked(Point robotPosition, Point enemyPosition, Poin
 bool GameManager::IsInRange(Point robotPosition, Point enemyPosition)
 {
     return robotPosition == enemyPosition;
+}
+
+void GameManager::LoadPictures()
+{
+    std::fstream pictures(ConfigManager().picturePath);
+
+    if(!pictures.is_open())
+    {
+        std::cerr << "ERROR: Unable to open .picture file" << std::endl << std::flush;
+        std::exit(EXIT_FAILURE);
+    }
+
+    std::string line;
+    std::string picture;
+    while(getline(pictures, line))
+    {
+        if((line = ConfigManager::RemoveNewLine(line)).empty())
+        {
+            this->robotPictures.push_back(picture);
+            picture = "";
+            continue;
+        }
+
+        picture += line;
+        picture += "\t";
+    }
 }

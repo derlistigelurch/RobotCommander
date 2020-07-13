@@ -11,11 +11,11 @@ class Robot
 {
 public:
     Robot(int id, char symbol, const std::string &name, int health, int actionPoints, int damage,
-          int attackRadius, const std::string &description, Point position);
+          int attackRadius, const std::string &description, Point position, const std::string &picture);
 
     virtual ~Robot() = default;
 
-    virtual void Attack(Robot *robot, int damage) const;
+    virtual void Attack(Robot *robot, int dmg) const;
 
     virtual void Move(Directions direction, int movementCost);
 
@@ -35,9 +35,11 @@ public:
     char symbol;
 
     Point position;
-    std::string name;
 
+    std::string name;
     std::string description;
+    std::string picture;
+
     static const int DESTROYED = 36;
 };
 
