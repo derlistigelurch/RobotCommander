@@ -18,7 +18,6 @@ int main()
 }
 
 // TODO:
-//  Show Ascii image in the StatsDisplay
 //  Write error messages to log file
 //  Signal handling
 //  Enemy movement

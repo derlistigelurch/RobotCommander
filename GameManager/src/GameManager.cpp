@@ -170,6 +170,7 @@ void GameManager::Run()
 
                 // SYMBOL|E:ID:SYMBOL:NAME:CURRENT_HEALTH:HEALTH:CURRENT_ACTION_POINTS:ACTION_POINTS:DAMAGE:ATTACK_RADIUS:POSITION:DESCRIPTION
                 this->WriteToPipe(this->ToString(robot->symbol).append(":")
+                                          .append(robot->picture).append(":")
                                           .append(std::to_string(robot->id)).append(":")
                                           .append(this->ToString(robot->symbol)).append(":")
                                           .append(robot->name).append(":")
@@ -366,13 +367,20 @@ void GameManager::LoadRobots(const std::string &identifier)
     std::string description;
     std::string line;
 
+    std::random_device generator;
+    std::uniform_int_distribution<int> distribution(0, this->robotPictures.size() - 1);
 
     while(getline(robots, line))
     {
         int pos = 0;
         line = ConfigManager::RemoveNewLine(line);
 
-        if(line == "ROBOT" || line.empty() || counter == this->playerCount)
+        if(counter == this->playerCount)
+        {
+            break;
+        }
+
+        if(line == "ROBOT" || line.empty())
         {
             continue;
         }
@@ -441,14 +449,14 @@ void GameManager::LoadRobots(const std::string &identifier)
         {
             this->players.push_back(new Player(id, symbol, name, health, actionPoints, damage, attackRadius,
                                                description, this->map->playerSpawnPoints[counter],
-                                               this->robotPictures[rand() % this->robotPictures.size()]));
+                                               this->robotPictures[distribution(generator)]));
         }
 
         if(identifier == ENEMY)
         {
             this->enemies.push_back(new Enemy(id, symbol, name, health, actionPoints, damage, attackRadius,
                                               description, this->map->enemySpawnPoints[counter],
-                                              this->robotPictures[0]));
+                                              this->robotPictures[distribution(generator)]));
         }
 
         counter++;
@@ -672,6 +680,7 @@ void GameManager::LoadPictures()
     {
         if((line = ConfigManager::RemoveNewLine(line)).empty())
         {
+            std::replace(picture.begin(), picture.end(), ':', ';');
             this->robotPictures.push_back(picture);
             picture = "";
             continue;

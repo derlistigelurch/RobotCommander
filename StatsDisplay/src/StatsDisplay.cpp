@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include "../../MapDisplay/include/Colors.h"
 #include "../../MessageManager/include/ConfigManager.h"
@@ -49,6 +50,11 @@ int main()
             {
                 bgColor = BG_RED;
             }
+
+            std::string picture = GetValue(line);
+            std::replace(picture.begin(), picture.end(), '\t', '\n');
+            std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << picture << RESET
+                      << std::flush << std::endl;
 
             std::cout << ESCAPE << bgColor << SEPARATOR << FG_BLACK << END_ESCAPE << "ID:" << RESET << " "
                       << GetValue(line) << std::flush << std::endl;

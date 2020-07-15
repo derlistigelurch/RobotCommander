@@ -8,6 +8,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <random>
 
 #include "Map.h"
 #include "ScreenManager.h"

@@ -2,7 +2,6 @@
 #include <sys/msg.h>
 
 #include <iostream>
-#include <cstring>
 
 #include "../MapDisplay/include/Colors.h"
 #include "../MessageManager/include/ConfigManager.h"
@@ -14,7 +13,7 @@ int main()
     auto *ioManager = new IOManager();
     ioManager->Wait(250000);
 
-    ioManager->GameMode();
+    // ioManager->GameMode();
 
     std::string input;
     struct Message message{};
@@ -35,17 +34,17 @@ int main()
 
         ioManager->SendMessage(1, input, IOManager::Sender::IO);
 
-        if(input == "F")
+        if(input == IOManager::FIGHT)
         {
             ioManager->GameMode();
         }
 
-        if(input == "W")
+        if(input == IOManager::WORKSHOP)
         {
             // ioManager->WorkshopMode();
         }
 
-        if(input == "E")
+        if(input == IOManager::EXIT)
         {
             break;
         }
