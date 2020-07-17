@@ -1,7 +1,9 @@
 #include <algorithm>
+
 #include "../include/GameManager.h"
 #include "../../MessageManager/include/ConfigManager.h"
 #include "../../MapDisplay/include/TileTypes.h"
+#include "../../MapDisplay/include/Colors.h"
 
 
 GameManager::GameManager()
@@ -34,6 +36,7 @@ void GameManager::Run()
         {
             this->WriteToPipe("L:", GameManager::Sender::LOG);
         }
+
         if(enemyCount == 0)
         {
             this->WriteToPipe("W:", GameManager::Sender::LOG);
@@ -239,6 +242,7 @@ void GameManager::Initialize()
     std::string errorMessage;
     this->GetMessageQueue(GameManager::Sender::GAME);
 
+    std::cout << CLEAR << std::flush;
     ScreenManager::ShowFightScreen();
 
     while(true)
@@ -259,8 +263,12 @@ void GameManager::Initialize()
     this->enemyCount = this->map->enemyCount;
     this->playerCount = this->map->playerCount;
 
+    std::cout << CLEAR << std::flush;
+
     ScreenManager::ShowFightScreen();
+    std::cout << std::endl << std::flush;
     this->ShowConfiguration();
+    std::cout << std::endl << std::flush;
     ScreenManager::ShowFightMenu();
 
     this->LoadRobots(PLAYER);

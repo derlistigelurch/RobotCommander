@@ -1,23 +1,18 @@
-#include <iostream>
+#include <memory>
 
 #include "include/GameManager.h"
-#include "include/ScreenManager.h"
 #include "../MessageManager/include/ConfigManager.h"
 
 int main()
 {
-    auto configManager = new ConfigManager();
+    std::shared_ptr<ConfigManager> configManager = std::make_shared<ConfigManager>();
+    std::shared_ptr<GameManager> gameManager = std::make_shared<GameManager>();
 
+    // auto *gameManager = new GameManager();
     system(("gnome-terminal -- " + configManager->mapPath).c_str());
     system(("gnome-terminal -- " + configManager->logPath).c_str());
     system(("gnome-terminal -- " + configManager->statsPath).c_str());
 
-    auto *gameManager = new GameManager();
-
     gameManager->Run();
-
-    delete configManager;
-    delete gameManager;
-
     return EXIT_SUCCESS;
 }

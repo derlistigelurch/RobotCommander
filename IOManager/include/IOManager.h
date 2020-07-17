@@ -14,7 +14,7 @@ public:
 
     ~IOManager() = default;
 
-    void GameMode();
+    void RunGameMode();
 
     inline static const std::string FIGHT = "F";
     inline static const std::string WORKSHOP = "W";

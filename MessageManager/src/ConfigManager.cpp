@@ -9,7 +9,6 @@ ConfigManager::ConfigManager()
     this->LoadConfig();
 }
 
-// TODO: refactor
 void ConfigManager::LoadConfig()
 {
     std::string line;

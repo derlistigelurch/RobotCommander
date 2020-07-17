@@ -4,7 +4,7 @@
 
 #include "../../MapDisplay/include/Colors.h"
 
-void IOManager::GameMode()
+void IOManager::RunGameMode()
 {
     struct Message message{};
     std::string input;

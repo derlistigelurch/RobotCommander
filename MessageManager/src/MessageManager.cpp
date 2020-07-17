@@ -8,6 +8,7 @@
 
 #include "../include/ConfigManager.h"
 #include "../../GameManager/include/ScreenManager.h"
+#include "../../MapDisplay/include/Colors.h"
 
 MessageManager::~MessageManager()
 {
@@ -70,6 +71,7 @@ void MessageManager::Run()
     Message message{};
     std::string errorMessage;
 
+
     ScreenManager::ShowMainScreen();
     ScreenManager::ShowMainMenu();
 
@@ -79,11 +81,12 @@ void MessageManager::Run()
 
         message = this->ReceiveMessage(MessageManager::IO);
         errorMessage = "";
-
         switch(message.text[0])
         {
             case FIGHT:
                 system(ConfigManager().gameManagerPath.c_str());
+                ScreenManager::ShowMainScreen();
+                ScreenManager::ShowMainMenu();
                 break;
 
             case WORKSHOP:
