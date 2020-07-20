@@ -1,5 +1,5 @@
 # Robot Commander
-A small turn based strategy game, written in C/C++.
+A small turn based strategy game written in C/C++.
 
 The game is still under development. :D
 
@@ -24,7 +24,7 @@ Each robot consists of the same attributes.
 
 * `Id` - random numeric value
 * `Name` - name of the robot (i prefer names of old yu-gi-oh cards ;-))
-* `Symbol` - char which represents your robot on the map (Default: `P` - Player, `E` - Enemy)
+* `Symbol` - char which represents your robot on the map (`P` - Player, `E` - Enemy)
 * `Action Points` - Number of actions a robot can perform in one round
 * `Attack Radius` - Attack range of the robot
 * `Damage` - number of d3 rolled to determine the damage
@@ -35,15 +35,17 @@ Each robot consists of the same attributes.
 ### Valid Characters
 As mentioned before, every map may only contain certain letters in order to work.
 
-* `M` - Mountain 
+* `M` - Mountain
+    * Blocks attacks and movement
 * `G` - Grass
 * `F` - Forest
 * `B` - Building
 * `W` - Water
+    * Moving through water costs 2 `AP`
 * `S` - Spawn Point
 
 ### `.map` file
-to create a valid `.map` file some rules must be followed
+To create a valid `.map` file some rules must be followed
 * the first line of every `.map` file should contain the dimensions of the map seperated by a `x`
 * the second line contains the number of robots sperated by an `x`. The number of robots (`Players` + `Enemies`) should match the number of `Spawn Points`.
 
@@ -63,15 +65,66 @@ MGGGGGGGGFFFFFFM
 MMMMMMMMMMMMMMMM
 ```
 
+### Robots
+### `.save` file
+The `.save` file contains all robots. 
+The first line of a new robot is the `ROBOT` tag, it indicates the beginning of a new robot. The second line contains the `ID`, the third the `SYMBOL` and so on.
+
+A valid `ROBOT` could look like this:
+
+```
+ROBOT
+ID:3
+SYMBOL:P
+NAME:Dark Machine-Wizard
+HEALTH:12
+ACTION_POINTS:2
+DAMAGE:4
+ATTACK_RADIUS:1
+DESCRIPTION:
+The ultimate robot in terms of attack and defense.
+```
+### `.pictures` file
+At the start of the game, every robot gets a random image from the `.picture` file.
+It contains some custom ASCII-art images from cartoon robots. If you want to add new images, just copy and paste them into the file. At the end of every picture has to be a new line character `'\n'`.
+
+A valid `picture` in the `.picture` file could look like this:
+```
++--------------------+
+|MMMMMMMMMWMMMMMMMMMM|
+|MMMNxdKKMXMMMMMMMMMM|
+|MMMMMl.';dxKWXNNWWMM|
+|Mk;'l..''..;,..lkoxW|
+|M0loO;;c. ...;....lW|
+|MMMMMWc;;..'.',d0MMM|
+|MMMMMMco'Xxx..cXMMMM|
+|MMMMMNl.kMMNc.XNNMMM|
+|MMMMM0,OMMMMMXkXMMMM|
+|MMMMM'.XMMMMMMMMMMMM|
+|MMMMMckMMMMMMMMMMMMM|
+|MMMMMNNMMMMMMMMMMMMM|
++--------------------+
+
+```
+ 
 ## Commands
 ### Menu Commands
-* `F` - Fight
-* `W` - Workshop
-* `E` - Exit
+* `F` - Fight - start a fight
+* `W` - Workshop - open the workshop and start creating your own maps and robots (coming soon!)
+* `E` - Exit - exit game
 
 ### Fight Commands
-* `M` - Move
-* `A` - Attack
-* `S` - Show
-* `H` - Help
-* `R` - Retreat
+Every parameter in a fight command is seperated by a '`:`'
+* `M`|`A`|`S`|`H`|`R` - the action you want o perform
+* `R` - Robot - `SYMBOL` and `ID` of a robot e.g. `E1`, `P1`, `E3`
+* `N`|`E`|`S`|`W` - Direction the robot should go
+
+#### Command parameter
+* `M` - Move - move your robot in a given direction
+    * M:R:N|E|S|W
+* `A` - Attack - attack an enemy robot
+    * A:R:R
+* `S` - Show - show stats of a robot
+    * S:R
+* `H` - Help - displays the manual
+* `R` - Retreat - reatreat from combat

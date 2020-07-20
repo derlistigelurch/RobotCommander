@@ -146,6 +146,16 @@ private:
      */
     bool IsInRange(Point robotPosition, Point enemyPosition);
 
+    /**
+     * calculates the distance to every enemy robot and returns a robot pointer to the nearest enemy robot
+     * @param identifier - string identifier, player or enemy
+     * @param position - start position
+     * @return returns a robot pointer of the nearest enemy robot
+     */
+    Robot *GetNearestRobot(const std::string &identifier, Point position);
+
+    void Attack(Robot *robot, Robot *enemy, int damage);
+
     int playerCount;
     int enemyCount;
 

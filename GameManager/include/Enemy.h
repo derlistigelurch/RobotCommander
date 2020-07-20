@@ -3,6 +3,7 @@
 
 
 #include "Robot.h"
+#include "Map.h"
 
 class Enemy : public Robot
 {
@@ -11,6 +12,8 @@ public:
           const std::string &description, Point position, const std::string &picture);
 
     ~Enemy() = default;
+
+    void GetPathToPlayer(Robot *enemy, Map *map);
 };
 
 

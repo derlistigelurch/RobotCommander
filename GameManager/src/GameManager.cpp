@@ -32,26 +32,150 @@ void GameManager::Run()
 
     while(true)
     {
-        if(playerCount == 0)
-        {
-            this->WriteToPipe("L:", GameManager::Sender::LOG);
-        }
-
         if(enemyCount == 0)
         {
             this->WriteToPipe("W:", GameManager::Sender::LOG);
+            this->Wait(1000000);
+            return;
         }
 
         if(turnCounter % 2 == 0)
         {
-            this->Wait(100000);
             // enemy make decision -> move -> attack
+            for(auto &e : this->enemies)
+            {
+                Robot *p = this->GetNearestRobot(GameManager::PLAYER, e->position);
+
+                while(e->currentActionPoints != 0)
+                {
+                    this->Wait(750000);
+                    int damage;
+                    if((damage = this->CanAttack(e, p)) != ERR_ATTACK_IS_BLOCKED && damage != ERR_OUT_OF_RANGE)
+                    {
+                        // attack
+                        this->Attack(e, p, e->GetDamage());
+                        continue;
+                    }
+
+                    int canMove;
+                    std::string oldPos = e->position.ToString();
+                    if(e->position.x > p->position.x)
+                    {
+                        if((canMove = this->CanMove(*e, Directions::WEST)) != ERR_MOVE_BLOCKED &&
+                           canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::WEST, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::SOUTH)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::SOUTH, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::NORTH)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::NORTH, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::EAST)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::EAST, MOVEMENT_COST);
+                        }
+                    }
+                    else if(e->position.x < p->position.x)
+                    {
+                        if((canMove = this->CanMove(*e, Directions::EAST)) != ERR_MOVE_BLOCKED &&
+                           canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::EAST, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::SOUTH)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::SOUTH, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::NORTH)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::NORTH, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::WEST)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::WEST, MOVEMENT_COST);
+                        }
+                    }
+                    else if(e->position.y > p->position.y)
+                    {
+                        if((canMove = this->CanMove(*e, Directions::NORTH)) != ERR_MOVE_BLOCKED &&
+                           canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::NORTH, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::EAST)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::EAST, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::WEST)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::WEST, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::SOUTH)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::SOUTH, MOVEMENT_COST);
+                        }
+                    }
+                    else
+                    {
+                        if((canMove = this->CanMove(*e, Directions::SOUTH)) != ERR_MOVE_BLOCKED &&
+                           canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::SOUTH, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::EAST)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::EAST, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::WEST)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::WEST, MOVEMENT_COST);
+                        }
+                        else if((canMove = this->CanMove(*e, Directions::NORTH)) != ERR_MOVE_BLOCKED &&
+                                canMove != ERR_NOT_ENOUGH_AP)
+                        {
+                            e->Move(Directions::NORTH, MOVEMENT_COST);
+                        }
+                    }
+
+                    this->WriteToPipe(this->ToString('M').append(":")
+                                              .append(this->ToString(e->symbol)
+                                                              .append(std::to_string(e->id))).append(":")
+                                              .append(oldPos).append(":")
+                                              .append(e->position.ToString()),
+                                      GameManager::Sender::LOG);
+                    this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+                }
+            }
+
+            if(playerCount == 0)
+            {
+                this->WriteToPipe("L:", GameManager::Sender::LOG);
+                this->Wait(1000000);
+                return;
+            }
+
             this->WriteToPipe(this->ToString('E').append(1, ':')
                                       .append(std::to_string(turnCounter)),
                               GameManager::Sender::LOG);
             this->ResetActionPoints();
             turnCounter++;
         }
+
 
         std::string content = this->ToUpper(this->ReceiveMessage(GameManager::Sender::GAME).text);
         char action = GetValue(content)[0];
@@ -76,7 +200,6 @@ void GameManager::Run()
                 }
 
                 int damage;
-                // switch(damage = robot->Attack(enemy))
                 switch(damage = this->CanAttack(robot, enemy))
                 {
                     case ERR_ATTACK_IS_BLOCKED:
@@ -88,31 +211,7 @@ void GameManager::Run()
                         break;
 
                     default:
-                        robot->currentActionPoints = 0;
-                        robot->Attack(enemy, damage);
-                        if(enemy->currentHealth <= 0)
-                        {
-                            this->DeleteRobot(enemy->symbol, enemy->id);
-                            robot->currentActionPoints = 0;
-                            // D:E1
-                            this->WriteToPipe(
-                                    "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
-                                            .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
-                                            .append(":").append(std::to_string(damage)),
-                                    GameManager::Sender::LOG);
-                            this->WriteToPipe("D:" + this->ToString(enemy->symbol).append(std::to_string(enemy->id)),
-                                              GameManager::Sender::LOG);
-                        }
-                        else
-                        {
-                            this->WriteToPipe(
-                                    "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
-                                            .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
-                                            .append(":").append(std::to_string(damage)),
-                                    GameManager::Sender::LOG);
-                        }
-
-                        this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+                        this->Attack(robot, enemy, damage);
                         break;
                 }
 
@@ -697,4 +796,57 @@ void GameManager::LoadPictures()
         picture += line;
         picture += "\t";
     }
+}
+
+void GameManager::Attack(Robot *robot, Robot *enemy, int damage)
+{
+    robot->currentActionPoints = 0;
+    robot->Attack(enemy, damage);
+    if(enemy->currentHealth <= 0)
+    {
+        this->DeleteRobot(enemy->symbol, enemy->id);
+        robot->currentActionPoints = 0;
+        // D:E1
+        this->WriteToPipe(
+                "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
+                        .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
+                        .append(":").append(std::to_string(damage)),
+                GameManager::Sender::LOG);
+        this->WriteToPipe("D:" + this->ToString(enemy->symbol).append(std::to_string(enemy->id)),
+                          GameManager::Sender::LOG);
+    }
+    else
+    {
+        this->WriteToPipe(
+                "A:" + this->ToString(robot->symbol).append(std::to_string(robot->id)).append(":")
+                        .append(this->ToString(enemy->symbol)).append(std::to_string(enemy->id))
+                        .append(":").append(std::to_string(damage)),
+                GameManager::Sender::LOG);
+    }
+
+    this->WriteToPipe(this->DrawMap(), GameManager::Sender::MAP);
+}
+
+Robot *GameManager::GetNearestRobot(const std::string &identifier, Point position)
+{
+    std::vector<Robot *> robots = identifier == GameManager::PLAYER
+                                  ? this->players
+                                  : this->enemies;
+
+    Robot *nearestRobot = robots[0];
+    int distance = INT16_MAX;
+
+    for(auto &p : robots)
+    {
+        int currentDistance = (int) (std::pow(position.x - p->position.x, 2) +
+                                     (std::pow(position.y - p->position.y, 2)));
+
+        if(currentDistance < distance)
+        {
+            distance = currentDistance;
+            nearestRobot = p;
+        }
+    }
+
+    return nearestRobot;
 }

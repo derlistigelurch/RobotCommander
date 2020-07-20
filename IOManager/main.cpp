@@ -10,7 +10,7 @@ int main()
     auto *ioManager = new IOManager();
     ioManager->Wait(250000);
 
-    //ioManager->GameMode();
+    // ioManager->RunGameMode();
 
     std::string input;
     struct Message message{};

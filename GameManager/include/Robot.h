@@ -6,6 +6,7 @@
 
 #include "Point.h"
 #include "Directions.h"
+#include "Map.h"
 
 class Robot
 {
