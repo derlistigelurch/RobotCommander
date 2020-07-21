@@ -69,11 +69,6 @@ private:
     std::string ToString(char c) const;
 
     /**
-     * Prints the manual of the game
-     */
-    void PrintManual() const;
-
-    /**
      * Splits a given string into its parts and returns the value on every call
      * @param line
      * @return Returns the first occurrence of string

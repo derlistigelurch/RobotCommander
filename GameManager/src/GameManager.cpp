@@ -290,7 +290,8 @@ void GameManager::Run()
 
             case HELP:
                 // TODO: add manual
-                this->PrintManual();
+                // this->PrintManual();
+                ScreenManager::PrintManual();
                 break;
 
             case RETREAT: // R:
@@ -588,11 +589,6 @@ std::string GameManager::ToString(const std::vector<std::vector<char>> &grid)
     }
 
     return gridString;
-}
-
-void GameManager::PrintManual() const
-{
-    std::cout << "HELP" << std::endl << std::flush;
 }
 
 std::string GameManager::GetValue(std::string &line)
