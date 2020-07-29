@@ -41,7 +41,6 @@ void GameManager::Run()
 
         if(turnCounter % 2 == 0)
         {
-            // enemy make decision -> move -> attack
             for(auto &e : this->enemies)
             {
                 Robot *p = this->GetNearestRobot(GameManager::PLAYER, e->position);
@@ -289,8 +288,6 @@ void GameManager::Run()
             }
 
             case HELP:
-                // TODO: add manual
-                // this->PrintManual();
                 ScreenManager::PrintManual();
                 break;
 

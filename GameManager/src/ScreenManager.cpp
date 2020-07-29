@@ -18,7 +18,6 @@ void ScreenManager::ShowMainScreen()
 void ScreenManager::ShowMainMenu()
 {
     std::cout << "F - Fight\n"
-                 "W - Workshop\n"
                  "E - Exit\n"
               << std::endl << std::flush;
 }

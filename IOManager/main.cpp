@@ -36,11 +36,6 @@ int main()
             ioManager->RunGameMode();
         }
 
-        if(input == IOManager::WORKSHOP)
-        {
-            // ioManager->WorkshopMode();
-        }
-
         if(input == IOManager::EXIT)
         {
             break;

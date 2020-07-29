@@ -12,9 +12,3 @@ int main()
 
     messageManager->Run();
 }
-
-// TODO:
-//  Write error messages to log file
-//  Enemy movement
-//  Enemy attack
-//  Workshop

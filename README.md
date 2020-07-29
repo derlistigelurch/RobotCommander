@@ -110,7 +110,6 @@ A valid `picture` in the `.picture` file could look like this:
 ## Commands
 ### Menu Commands
 * `F` - Fight - start a fight
-* `W` - Workshop - open the workshop and start creating your own maps and robots (coming soon!)
 * `E` - Exit - exit game
 
 ### Fight Commands

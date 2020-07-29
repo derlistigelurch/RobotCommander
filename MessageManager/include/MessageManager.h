@@ -16,7 +16,6 @@ private:
 
     static const char REGISTRATION = 'R';
     static const char FIGHT = 'F';
-    static const char WORKSHOP = 'W';
     static const char EXIT = 'E';
 
 public:

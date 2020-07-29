@@ -35,6 +35,16 @@ public:
      * Prints the manual of the game
      */
     static void PrintManual();
+
+    /**
+     * Shows the WORKSHOP screen
+     */
+    static void ShowWorkshopScreen();
+
+    /**
+     * Shows the workshops menu
+     */
+    static void ShowWorkshopMenu();
 };
 
 

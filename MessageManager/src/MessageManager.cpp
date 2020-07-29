@@ -8,7 +8,6 @@
 
 #include "../include/ConfigManager.h"
 #include "../../GameManager/include/ScreenManager.h"
-#include "../../MapDisplay/include/Colors.h"
 
 MessageManager::~MessageManager()
 {
@@ -87,10 +86,6 @@ void MessageManager::Run()
                 system(ConfigManager().gameManagerPath.c_str());
                 ScreenManager::ShowMainScreen();
                 ScreenManager::ShowMainMenu();
-                break;
-
-            case WORKSHOP:
-                // Open Workshop
                 break;
 
             case EXIT:

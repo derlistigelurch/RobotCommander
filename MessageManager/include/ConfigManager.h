@@ -6,7 +6,6 @@
 class ConfigManager
 {
 private:
-    // inline static const std::string CONFIG_PATH = "../../config/test_RobotCommander.config";
     inline static const std::string CONFIG_PATH = "config/RobotCommander.config";
 
 public:
